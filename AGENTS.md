@@ -1,193 +1,66 @@
-# ARCHITECTURE.md — GIFT PET 프로젝트 구조
+# AGENTS.md — GIFT PET 프로젝트 에이전트 규칙
+
+이 파일은 Claude Code가 이 프로젝트에서 작업할 때 반드시 따라야 하는 규칙을 정의합니다.
+**작업 시작 전 반드시 이 파일과 ARCHITECTURE.md, DESIGN_SYSTEM.md를 읽을 것.**
 
 ---
 
-## 기술 스택
+## 1. 작업 원칙
 
-| 항목 | 선택 | 이유 |
-|---|---|---|
-| 프레임워크 | Next.js 15 (App Router) | create-next-app 기본값 |
-| 언어 | TypeScript (strict) | create-next-app 기본값 |
-| 스타일링 | Tailwind CSS v4 | create-next-app 기본값 |
-| 폰트 | next/font (Google Fonts) | 자동 최적화, CLS 방지 |
-| 아이콘 | Material Symbols Outlined | 디자인 원본과 동일 |
-| 이미지 | next/image | 자동 최적화, lazy loading |
-| 린터 | ESLint (Next.js 기본 설정) | create-next-app 기본값 |
+### 1-1. 파일 수정 전 확인 사항
+- 수정 대상 파일을 먼저 읽고 전체 구조를 파악한 뒤 작업한다.
+- 기존 코드를 삭제하기 전에 그 코드가 다른 곳에서 참조되는지 확인한다.
+- 한 번에 여러 파일을 수정할 경우 의존 관계 순서를 지킨다 (types → utils → components → page).
 
----
+### 1-2. 절대 하지 말 것
+- `any` 타입 사용 금지. 타입을 모르면 작업 전 사용자에게 확인 요청.
+- `tailwind.config.ts`의 커스텀 토큰을 임의로 변경하거나 삭제하지 않는다.
+- 인라인 스타일(`style={{}}`) 사용 금지. Tailwind 클래스만 사용한다.
+- `console.log` 디버그 코드를 커밋 상태로 남기지 않는다.
+- placeholder 이미지 URL(lh3.googleusercontent.com)을 그대로 사용하지 않는다. `/images/placeholder.jpg`로 교체한다.
 
-## 디렉토리 구조
-
-```
-gift-pet/
-├── public/
-│   └── images/
-│       └── placeholder.svg          # 개발용 placeholder 이미지 (SVG 형식)
-│
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx               # 루트 레이아웃 (폰트, 메타데이터)
-│   │   ├── page.tsx                 # 메인페이지 (섹션 조합)
-│   │   ├── globals.css              # Tailwind 디렉티브, 전역 스타일
-│   │   └── shop/
-│   │       ├── page.tsx             # /shop — 전체 상품
-│   │       ├── food/
-│   │       │   └── page.tsx         # /shop/food — 전체 사료
-│   │       ├── treats/
-│   │       │   └── page.tsx         # /shop/treats — 전체 간식
-│   │       ├── supplies/
-│   │       │   └── page.tsx         # /shop/supplies — 전체 용품
-│   │       ├── supplements/
-│   │       │   └── page.tsx         # /shop/supplements — 전체 영양제
-│   │       └── [category]/
-│   │           ├── page.tsx         # /shop/dog, /shop/cat — 동물별 전체
-│   │           └── [subcategory]/
-│   │               └── page.tsx     # /shop/dog/food, /shop/cat/treats 등
-│   │
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Header.tsx           # 데스크톱 헤더 (로고, 검색, GNB, 메가메뉴)
-│   │   │   ├── MobileHeader.tsx     # 모바일 헤더 (햄버거, 로고, 아이콘)
-│   │   │   ├── MobileDrawer.tsx     # 모바일 사이드 드로어 메뉴
-│   │   │   └── Footer.tsx           # 푸터 (뉴스레터, 링크, 소셜)
-│   │   │
-│   │   ├── sections/
-│   │   │   ├── HeroBanner.tsx       # 히어로 배너 섹션
-│   │   │   ├── CategoryPills.tsx    # 카테고리 필 (모바일 전용)
-│   │   │   ├── NewArrivals.tsx      # 신상품 섹션 (가로 스크롤)
-│   │   │   └── MdRecommendation.tsx # MD 추천 섹션 (원형 아이템)
-│   │   │
-│   │   └── ui/
-│   │       ├── ProductCard.tsx      # 상품 카드 컴포넌트
-│   │       ├── CircularItem.tsx     # MD 추천용 원형 아이템
-│   │       ├── ProductGrid.tsx      # 상품 카드 4열 그리드. 상품 리스트 페이지에서 사용.
-│   │       └── CategorySidebar.tsx  # 카테고리 필터 사이드바. 상품 리스트 페이지 좌측 고정.
-│   │
-│   └── types/
-│       └── index.ts                 # 공통 타입 정의
-│
-├── references/
-│   ├── web/
-│   │   ├── v0_main_web.html         # 메인페이지 디자인 원본 (데스크톱)
-│   │   └── v0_item_list.html        # 상품 리스트 디자인 원본 (데스크톱)
-│   └── mobile/
-│       ├── v0_main_mobile.html      # 메인페이지 디자인 원본 (모바일)
-│       └── v0_item_list.html        # 상품 리스트 디자인 원본 (모바일)
-│
-├── tailwind.config.ts               # 커스텀 토큰 (DESIGN_SYSTEM.md 기반)
-├── AGENTS.md
-├── ARCHITECTURE.md
-├── DESIGN_SYSTEM.md
-├── CHANGELOG.md
-└── README.md
-```
+### 1-3. 컴포넌트 작성 기준
+- 컴포넌트 하나당 파일 하나. 파일명은 PascalCase (`ProductCard.tsx`).
+- props 타입은 컴포넌트 파일 상단에 `interface`로 선언한다.
+- 서버 컴포넌트가 기본. 상태·이벤트·브라우저 API가 필요한 경우에만 `'use client'` 추가.
+- 재사용 가능한 UI 조각은 `src/components/ui/`에, 페이지 전용 섹션은 `src/components/sections/`에 둔다.
 
 ---
 
-## 컴포넌트 책임 분리
+## 2. 작업 워크플로우
 
-### layout/ — 페이지 공통 요소
-- `Header.tsx`: 데스크톱(md 이상)에서 표시. sticky 포지션. 메가메뉴 포함.
-- `MobileHeader.tsx`: 모바일(md 미만)에서 표시. 햄버거 버튼으로 Drawer 제어.
-- `MobileDrawer.tsx`: `'use client'`. 열림/닫힘 상태 관리. overlay 포함.
-- `Footer.tsx`: 데스크톱 3컬럼 / 모바일 단일 컬럼. 뉴스레터 input 포함.
+### 새 컴포넌트 추가 시
+1. `ARCHITECTURE.md`에서 해당 컴포넌트의 위치 확인
+2. `DESIGN_SYSTEM.md`에서 사용할 색상 토큰 · 타이포그래피 토큰 확인
+3. props 인터페이스 정의
+4. 컴포넌트 구현 (Tailwind 토큰 사용)
+5. `src/app/page.tsx`에 import 및 배치
 
-### sections/ — 메인페이지 섹션
-- 각 섹션은 독립적. page.tsx에서 순서대로 배치.
-- `CategoryPills.tsx`: 모바일에서만 표시 (`md:hidden`).
-- `NewArrivals.tsx`: 가로 스크롤 캐러셀. 마지막 카드는 View More 카드.
-- `MdRecommendation.tsx`: 데스크톱은 가로 중앙 정렬. 모바일은 가로 스크롤.
-
-### ui/ — 재사용 단위 컴포넌트
-- `ProductCard.tsx`: 배지(NEW/BEST), 이미지, 상품명, 가격, Add to Cart 버튼.
-- `CircularItem.tsx`: 원형 이미지 + 라벨. MD 추천 섹션에서 사용.
-- `ProductGrid.tsx`: 상품 카드를 4열 그리드로 렌더링. 상품 리스트 페이지에서 사용.
-- `CategorySidebar.tsx`: 카테고리 필터 사이드바. 상품 리스트 페이지 좌측 고정.
+### 버그 수정 시
+1. 오류 메시지 또는 재현 조건을 먼저 파악
+2. 영향 범위 확인 (해당 컴포넌트만인지, 공통 유틸/훅인지)
+3. 수정 후 관련 컴포넌트가 여전히 정상 동작하는지 확인
 
 ---
 
-## 반응형 브레이크포인트
+## 3. 코드 품질 기준
 
-Tailwind 기본값 사용:
-- 모바일: `< 768px` (기본)
-- 데스크톱: `md:` (768px 이상)
-
-Header는 두 컴포넌트로 분리 (`Header` / `MobileHeader`). 각 컴포넌트 내부에서 `hidden md:block` / `md:hidden`으로 처리한다.
-
----
-
-## URL 구조 및 라우팅
-
-### 카테고리 구조
-
-```
-전체
-├── 사료 (food)
-├── 간식 (treats)
-├── 용품 (supplies)
-└── 영양제 (supplements)
-
-강아지 (dog)
-├── 사료 (food)
-├── 간식 (treats)
-├── 용품 (supplies)
-└── 영양제 (supplements)
-
-고양이 (cat)
-├── 간식 (treats)
-└── 용품 (supplies)
-```
-
-### URL 매핑
-
-| URL | 설명 |
-|---|---|
-| `/shop` | 전체 상품 |
-| `/shop/food` | 전체 사료 |
-| `/shop/treats` | 전체 간식 |
-| `/shop/supplies` | 전체 용품 |
-| `/shop/supplements` | 전체 영양제 |
-| `/shop/dog` | 강아지 전체 |
-| `/shop/dog/food` | 강아지 사료 |
-| `/shop/dog/treats` | 강아지 간식 |
-| `/shop/dog/supplies` | 강아지 용품 |
-| `/shop/dog/supplements` | 강아지 영양제 |
-| `/shop/cat` | 고양이 전체 |
-| `/shop/cat/treats` | 고양이 간식 |
-| `/shop/cat/supplies` | 고양이 용품 |
-
-### 라우팅 전략
-
-`/shop/food`(전체 카테고리)와 `/shop/dog/food`(동물별 서브카테고리)는 UI가 동일하다.
-`[category]/[subcategory]/page.tsx` 컴포넌트를 공유하고 params로 필터링한다.
-전체 카테고리 페이지(`/shop/food` 등)는 별도 폴더로 두되 동일한 컴포넌트를 재사용한다.
+- **TypeScript**: strict 모드. 타입 단언(`as`)은 꼭 필요한 경우에만, 주석으로 이유 명시.
+- **import 순서**: 1) React/Next.js 2) 외부 라이브러리 3) 내부 컴포넌트 4) 내부 유틸/타입
+- **함수**: 화살표 함수 선호. 컴포넌트 자체는 `export default function ComponentName`.
+- **주석**: "무엇"이 아닌 "왜"를 설명. 자명한 코드에 주석 불필요.
 
 ---
 
-## 타입 정의
+## 4. 현재 프로젝트 범위 (v0.1 — 메인페이지 껍데기)
 
-```typescript
-// src/types/index.ts
+이 단계에서 구현하는 것:
+- 정적 UI만. API 연동, 실제 데이터, 인증 없음.
+- placeholder 이미지와 더미 텍스트 사용.
+- 반응형 (모바일 / 데스크톱) 레이아웃.
 
-export type AnimalCategory = 'dog' | 'cat';
-export type ProductCategory = 'food' | 'treats' | 'supplies' | 'supplements';
-
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string;
-  badges: ('NEW' | 'BEST')[];
-  animalCategory: AnimalCategory | null; // null이면 전체 카테고리
-  productCategory: ProductCategory;
-}
-
-export interface CircularRecommendation {
-  id: string;
-  label: string;
-  imageUrl: string;
-  bgColor: string; // Tailwind 클래스
-}
-```
-
-더미 데이터는 각 컴포넌트 파일 내부에 `const DUMMY_DATA = [...]`로 선언한다.
+이 단계에서 구현하지 않는 것:
+- 장바구니 기능 (버튼 UI는 있지만 동작 없음)
+- 검색 기능 (input UI는 있지만 동작 없음)
+- 인증/로그인
+- 실제 상품 데이터 연동

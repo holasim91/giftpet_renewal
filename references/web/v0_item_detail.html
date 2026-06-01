@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Product Detail - GIFT PET</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#343434",
+                        "on-secondary-fixed-variant": "#454748",
+                        "on-primary-fixed-variant": "#8a1c04",
+                        "primary-fixed": "#ffdad3",
+                        "on-surface": "#181c1e",
+                        "on-background": "#181c1e",
+                        "outline-variant": "#e0bfb8",
+                        "background": "#f7fafd",
+                        "inverse-on-surface": "#eef1f4",
+                        "secondary-container": "#e1e3e4",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#6a1000",
+                        "surface-container-low": "#f1f4f7",
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "outline": "#8c716b",
+                        "surface-container-highest": "#e0e3e6",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7fafd",
+                        "secondary": "#5c5f60",
+                        "on-surface-variant": "#59413c",
+                        "primary": "#ac341b",
+                        "primary-container": "#ff7051",
+                        "surface-container-high": "#e5e8eb",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "secondary-fixed": "#e1e3e4",
+                        "tertiary-container": "#9e9c9c",
+                        "surface-tint": "#ac341b",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#ebeef1",
+                        "surface-dim": "#d7dadd",
+                        "primary-fixed-dim": "#ffb4a4",
+                        "on-secondary-fixed": "#191c1d",
+                        "on-secondary-container": "#626566",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f7fafd",
+                        "surface-variant": "#e0e3e6",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#ffb4a4",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#3d0500",
+                        "tertiary-fixed": "#e4e2e1",
+                        "tertiary": "#5f5e5e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin-mobile": "20px",
+                        "container-max-width": "1280px",
+                        "margin-desktop": "80px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "1.0", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest w-full top-0 sticky shadow-sm z-50"><div class="max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-6">
+<div class="flex items-center justify-between gap-gutter">
+<!-- Search Bar (Left) -->
+<div class="flex-1 hidden md:block">
+<div class="relative max-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-body-md focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search..." type="text"/>
+</div>
+</div>
+<!-- Logo (Center) -->
+<div class="flex-1 flex justify-center">
+<a class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight" href="#">GIFT PET</a>
+</div>
+<!-- Icons (Right) -->
+<div class="flex-1 flex justify-end items-center gap-6">
+<button class="text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">person</span>
+</button>
+<button class="text-on-surface hover:text-primary transition-colors hidden md:block">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="text-on-surface hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">shopping_bag</span>
+</button>
+</div>
+</div>
+<!-- Main Navigation (Centered Below) -->
+<nav class="flex justify-center gap-10 mt-8 border-b border-surface-container-high pb-4">
+<a class="text-on-surface-variant font-label-md text-label-md uppercase hover:text-primary transition-colors duration-200" href="#">NEW</a>
+<a class="text-on-surface-variant font-label-md text-label-md uppercase hover:text-primary transition-colors duration-200" href="#">BEST</a>
+<a class="text-primary font-label-md text-label-md uppercase border-b-2 border-primary pb-4 -mb-4 transition-colors duration-200" href="#">DOG</a>
+<a class="text-on-surface-variant font-label-md text-label-md uppercase hover:text-primary transition-colors duration-200" href="#">CAT</a>
+<a class="text-on-surface-variant font-label-md text-label-md uppercase hover:text-primary transition-colors duration-200" href="#">EVENT</a>
+</nav>
+</div></header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-secondary font-label-sm text-label-sm mb-6">
+<a class="hover:text-primary transition-colors" href="#">Home</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Dog</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Health &amp; Wellness</span>
+</nav>
+<!-- Product Hero Section (Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter lg:gap-12 mb-16">
+<!-- Left: Product Gallery -->
+<div class="flex flex-col gap-4">
+<div class="w-full aspect-[4/5] md:aspect-square bg-surface-container-low rounded-xl overflow-hidden shadow-sm relative group">
+<img alt="Product image showing Soft Clover Immune Booster packaging" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtKcbN15eIvbRZZMlCbb5tLc6-AhKBXhiozX2hwKNzQYiWEO7SHDQkMY1LNNooIqD4nb6LseKmlOlqkTNdwcYU2SRhCRQnC_liir3QqHKLRvYl_hTRgZJGh4jaCFiphwjPcST078AKQljaPIdpjJlpiD7Ol2pkBFeGlG19loU4HS4ik56WAMk-V91Ry0q6gw1-NZEK_3RgFcD3Yo06x_TCT4BOXbM2LNG0lp8AKb85XtfPtBVIa4fAQHLnPerYmRlTRBQbzz6F2sM"/>
+</div>
+<!-- Thumbnails -->
+<div class="grid grid-cols-5 gap-2 md:gap-4">
+<button class="aspect-square bg-surface-container-low rounded-lg overflow-hidden border-2 border-primary-container">
+<img alt="Thumbnail 1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtKcbN15eIvbRZZMlCbb5tLc6-AhKBXhiozX2hwKNzQYiWEO7SHDQkMY1LNNooIqD4nb6LseKmlOlqkTNdwcYU2SRhCRQnC_liir3QqHKLRvYl_hTRgZJGh4jaCFiphwjPcST078AKQljaPIdpjJlpiD7Ol2pkBFeGlG19loU4HS4ik56WAMk-V91Ry0q6gw1-NZEK_3RgFcD3Yo06x_TCT4BOXbM2LNG0lp8AKb85XtfPtBVIa4fAQHLnPerYmRlTRBQbzz6F2sM"/>
+</button>
+<button class="aspect-square bg-surface-container-low rounded-lg overflow-hidden border border-surface-variant opacity-70 hover:opacity-100 transition-opacity">
+<img alt="Thumbnail 2" class="w-full h-full object-cover filter grayscale blur-[1px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtKcbN15eIvbRZZMlCbb5tLc6-AhKBXhiozX2hwKNzQYiWEO7SHDQkMY1LNNooIqD4nb6LseKmlOlqkTNdwcYU2SRhCRQnC_liir3QqHKLRvYl_hTRgZJGh4jaCFiphwjPcST078AKQljaPIdpjJlpiD7Ol2pkBFeGlG19loU4HS4ik56WAMk-V91Ry0q6gw1-NZEK_3RgFcD3Yo06x_TCT4BOXbM2LNG0lp8AKb85XtfPtBVIa4fAQHLnPerYmRlTRBQbzz6F2sM"/>
+</button>
+<!-- More thumbnails would go here -->
+</div>
+</div>
+<!-- Right: Product Info -->
+<div class="flex flex-col gap-6">
+<!-- Title & Basic Info -->
+<div class="pb-6 border-b border-surface-variant">
+<div class="flex gap-2 mb-3">
+<span class="px-2 py-1 bg-surface-container-high text-on-surface-variant rounded text-[10px] font-bold uppercase tracking-wider">Offline Only</span>
+</div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
+                        [오프라인 전용] 트럼펫 소프트클로버 이뮨부스터 1kg
+                    </h1>
+<p class="font-headline-md text-headline-md text-primary font-bold">
+                        ₩35,000
+                    </p>
+</div>
+<!-- Specs -->
+<div class="flex flex-col gap-3 font-body-md text-body-md text-on-surface-variant">
+<div class="grid grid-cols-[100px_1fr] gap-4">
+<span class="text-secondary">Delivery Fee</span>
+<span>3,000 KRW <span class="text-sm text-secondary">(Free over 100,000 KRW)</span></span>
+</div>
+<div class="grid grid-cols-[100px_1fr] gap-4">
+<span class="text-secondary">Manufacturer</span>
+<span>(주)인터펫코리아</span>
+</div>
+<div class="grid grid-cols-[100px_1fr] gap-4">
+<span class="text-secondary">Origin</span>
+<span>Korea</span>
+</div>
+<div class="grid grid-cols-[100px_1fr] gap-4">
+<span class="text-secondary">Barcode</span>
+<span>8809818770769</span>
+</div>
+</div>
+<!-- Selection & Actions -->
+<div class="mt-4 flex flex-col gap-6 bg-surface-container-lowest p-6 rounded-xl border border-surface-variant shadow-sm">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface">Options</label>
+<select class="w-full bg-surface-container-low border border-surface-variant rounded-lg p-3 text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2359413c%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em]">
+<option>Select Option</option>
+<option>[오프라인 전용] 트럼펫 소프트클로버 이뮨부스터 1kg - ₩35,000</option>
+</select>
+</div>
+<!-- Selected Item Row -->
+<div class="bg-surface border border-surface-variant rounded-lg p-4 flex justify-between items-center">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">Selected Option</span>
+<span class="text-sm font-medium">이뮨부스터 1kg</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center border border-surface-variant rounded bg-surface-container-lowest">
+<button class="px-2 py-1 text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="w-10 text-center border-none p-0 text-sm focus:ring-0 bg-transparent" type="number" value="1"/>
+<button class="px-2 py-1 text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<span class="font-bold">₩35,000</span>
+</div>
+</div>
+<div class="flex justify-between items-end pt-4 border-t border-surface-variant">
+<span class="font-body-md text-body-md text-secondary">Total Amount</span>
+<div class="flex items-baseline gap-2">
+<span class="text-sm text-secondary">Total 1 items</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">₩35,000</span>
+</div>
+</div>
+<div class="flex gap-3 mt-2">
+<button class="h-12 w-12 flex items-center justify-center border border-surface-variant rounded-lg text-secondary hover:text-primary-container hover:border-primary-container transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="flex-1 h-12 bg-inverse-surface text-on-primary border border-transparent rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+                            ADD TO CART
+                        </button>
+<button class="flex-1 h-12 bg-primary-container text-on-primary border border-transparent rounded-lg font-label-md text-label-md hover:bg-primary transition-colors">
+                            BUY NOW
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Tabs -->
+<div class="mt-16 w-full">
+<div class="border-b border-surface-variant flex gap-8 overflow-x-auto no-scrollbar font-label-md text-label-md">
+<button class="pb-4 text-on-surface border-b-2 border-on-surface whitespace-nowrap">Product Description</button>
+<button class="pb-4 text-secondary hover:text-on-surface whitespace-nowrap">Reviews (0)</button>
+<button class="pb-4 text-secondary hover:text-on-surface whitespace-nowrap">Q&amp;A (0)</button>
+<button class="pb-4 text-secondary hover:text-on-surface whitespace-nowrap">Shipping Info</button>
+<button class="pb-4 text-secondary hover:text-on-surface whitespace-nowrap">Returns/Exchange</button>
+</div>
+<div class="py-12 flex justify-center">
+<img alt="Detailed product description image showing packaging and ingredients." class="max-w-full rounded-xl shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtKcbN15eIvbRZZMlCbb5tLc6-AhKBXhiozX2hwKNzQYiWEO7SHDQkMY1LNNooIqD4nb6LseKmlOlqkTNdwcYU2SRhCRQnC_liir3QqHKLRvYl_hTRgZJGh4jaCFiphwjPcST078AKQljaPIdpjJlpiD7Ol2pkBFeGlG19loU4HS4ik56WAMk-V91Ry0q6gw1-NZEK_3RgFcD3Yo06x_TCT4BOXbM2LNG0lp8AKb85XtfPtBVIa4fAQHLnPerYmRlTRBQbzz6F2sM"/>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low w-full mt-auto">
+<div class="max-w-container-max-width mx-auto px-margin-desktop py-12 flex flex-col md:flex-row justify-between items-start gap-8">
+<div class="flex flex-col gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">GIFT PET</span>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 GIFT PET. All rights reserved.</p>
+</div>
+<div class="flex flex-col md:flex-row gap-6 font-label-sm text-label-sm">
+<a class="text-on-surface-variant hover:text-primary underline transition-all focus:ring-2 focus:ring-primary" href="#">About Us</a>
+<a class="text-on-surface-variant hover:text-primary underline transition-all focus:ring-2 focus:ring-primary" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary underline transition-all focus:ring-2 focus:ring-primary" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary underline transition-all focus:ring-2 focus:ring-primary" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+</body></html>
