@@ -60,7 +60,7 @@ function ShopProductCard({ product }: { product: Product }) {
       {/* Product info */}
       <div className="mt-3 space-y-1 md:p-4 md:mt-0">
         <p className="text-label-sm text-on-surface-variant">{product.category}</p>
-        <h3 className="text-body-md text-on-surface line-clamp-2 leading-tight md:min-h-[48px] md:flex-grow">
+        <h3 className="text-body-md text-on-surface line-clamp-2 overflow-hidden text-ellipsis leading-snug">
           {product.name}
         </h3>
         <p className="text-headline-sm text-on-surface font-bold mt-2">
