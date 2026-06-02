@@ -4,26 +4,20 @@ import MobileHeader from '@/components/layout/MobileHeader';
 import Footer from '@/components/layout/Footer';
 import BottomNav from '@/components/layout/BottomNav';
 import ShopListContent from '@/components/ui/ShopListContent';
-import type { Product } from '@/types';
+import { getProducts } from '@/actions/product';
 
 export const metadata: Metadata = {
   title: '강아지 간식 | GIFT PET',
   description: '강아지를 위한 건강 간식',
 };
 
-const DUMMY_PRODUCTS: Product[] = [
-  { id: '1', name: '[오프라인 전용] 트럼펫 소프트클로버 이뮨부스터', price: 18500, imageUrl: '/images/placeholder.jpg', badges: ['BEST'], animalCategory: null, productCategory: 'treats', description: null, detailContent: null, discountPrice: null, stock: 0 },
-  { id: '2', name: '위시츄 덴탈집중케어 190g', price: 15000, imageUrl: '/images/placeholder.jpg', badges: [], animalCategory: null, productCategory: 'treats', description: null, detailContent: null, discountPrice: null, stock: 0 },
-  { id: '3', name: '져스트 드라이드 치킨저키 100g', price: 13500, imageUrl: '/images/placeholder.jpg', badges: ['HIT'], animalCategory: null, productCategory: 'treats', description: null, detailContent: null, discountPrice: null, stock: 0 },
-  { id: '4', name: '퍼피러브 소프트 트릿 믹스 200g', price: 11000, imageUrl: '/images/placeholder.jpg', badges: [], animalCategory: 'dog', productCategory: 'treats', description: null, detailContent: null, discountPrice: null, stock: 0 },
-];
-
-export default function DogTreatsPage() {
+export default async function DogTreatsPage() {
+  const products = await getProducts({ animalCategory: 'dog', productCategory: 'treats' });
   return (
     <>
       <Header />
       <MobileHeader />
-      <ShopListContent title="강아지 간식" products={DUMMY_PRODUCTS} />
+      <ShopListContent title="강아지 간식" products={products} />
       <Footer />
       <BottomNav />
     </>

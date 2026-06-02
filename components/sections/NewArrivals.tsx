@@ -1,88 +1,12 @@
+import Link from 'next/link';
 import ProductCard from '@/components/ui/ProductCard';
 import type { Product } from '@/types';
 
-const DUMMY_PRODUCTS: Product[] = [
-  {
-    id: '1',
-    name: '오가닉 연어 고양이 간식 100g',
-    price: 12990,
-    imageUrl: '/images/placeholder.jpg',
-    badges: ['NEW', 'BEST'],
-    animalCategory: 'cat',
-    productCategory: 'treats',
-    description: null,
-    detailContent: null,
-    discountPrice: null,
-    stock: 0,
-  },
-  {
-    id: '2',
-    name: '프리미엄 정형외과 강아지 침대 그레이',
-    price: 89990,
-    imageUrl: '/images/placeholder.jpg',
-    badges: ['NEW'],
-    animalCategory: 'dog',
-    productCategory: 'supplies',
-    description: null,
-    detailContent: null,
-    discountPrice: null,
-    stock: 0,
-  },
-  {
-    id: '3',
-    name: '스마트 자동 급수기 1.8L',
-    price: 45990,
-    imageUrl: '/images/placeholder.jpg',
-    badges: ['NEW'],
-    animalCategory: null,
-    productCategory: 'supplies',
-    description: null,
-    detailContent: null,
-    discountPrice: null,
-    stock: 0,
-  },
-  {
-    id: '4',
-    name: '내구성 츄잉 장난감 세트 L',
-    price: 24990,
-    imageUrl: '/images/placeholder.jpg',
-    badges: ['NEW'],
-    animalCategory: 'dog',
-    productCategory: 'supplies',
-    description: null,
-    detailContent: null,
-    discountPrice: null,
-    stock: 0,
-  },
-  {
-    id: '5',
-    name: '내추럴 그레인프리 강아지 사료 5kg',
-    price: 52000,
-    imageUrl: '/images/placeholder.jpg',
-    badges: ['BEST'],
-    animalCategory: 'dog',
-    productCategory: 'food',
-    description: null,
-    detailContent: null,
-    discountPrice: null,
-    stock: 0,
-  },
-  {
-    id: '6',
-    name: '고양이 스크래쳐 캣타워 하우스',
-    price: 78000,
-    imageUrl: '/images/placeholder.jpg',
-    badges: [],
-    animalCategory: 'cat',
-    productCategory: 'supplies',
-    description: null,
-    detailContent: null,
-    discountPrice: null,
-    stock: 0,
-  },
-];
+interface NewArrivalsProps {
+  products: Product[];
+}
 
-export default function NewArrivals() {
+export default function NewArrivals({ products }: NewArrivalsProps) {
   return (
     <section className="py-6 md:py-0 bg-surface md:bg-transparent">
 
@@ -109,19 +33,22 @@ export default function NewArrivals() {
         </div>
 
         {/* Mobile: View All link */}
-        <a href="#" className="md:hidden text-label-sm text-primary hover:underline">
+        <Link href="/shop" className="md:hidden text-label-sm text-primary hover:underline">
           전체 보기
-        </a>
+        </Link>
       </div>
 
       {/* Desktop: horizontal scroll carousel */}
       <div className="hidden md:flex overflow-x-auto gap-6 pb-8 no-scrollbar snap-x snap-mandatory">
-        {DUMMY_PRODUCTS.map((product) => (
+        {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
 
         {/* View More card */}
-        <div className="min-w-[280px] w-[280px] snap-start group cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+        <Link
+          href="/shop"
+          className="min-w-[280px] w-[280px] snap-start group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+        >
           <div className="relative bg-white rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] p-4 transition-all duration-300">
             <div className="aspect-square bg-surface-container-low rounded-lg mb-4 overflow-hidden relative flex items-center justify-center">
               <span className="material-symbols-outlined text-4xl text-tertiary">more_horiz</span>
@@ -130,12 +57,12 @@ export default function NewArrivals() {
               신상품 더 보기
             </h3>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Mobile: 2-column grid */}
       <div className="md:hidden grid grid-cols-2 gap-4 px-margin-mobile">
-        {DUMMY_PRODUCTS.map((product) => (
+        {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

@@ -1,35 +1,28 @@
 import Image from 'next/image';
 import CircularItem from '@/components/ui/CircularItem';
-import type { CircularRecommendation } from '@/types';
+import type { Product, CircularRecommendation } from '@/types';
 
-const DUMMY_RECS: CircularRecommendation[] = [
-  {
-    id: '1',
-    label: '소화 건강 프로바이오틱스',
-    imageUrl: '/images/placeholder.jpg',
-    bgColor: 'bg-primary-fixed',
-  },
-  {
-    id: '2',
-    label: '진정 효과 헴프오일',
-    imageUrl: '/images/placeholder.jpg',
-    bgColor: 'bg-primary-container',
-  },
-  {
-    id: '3',
-    label: '관절 영양 츄',
-    imageUrl: '/images/placeholder.jpg',
-    bgColor: 'bg-primary-fixed-dim',
-  },
-  {
-    id: '4',
-    label: '피부·피모 영양제',
-    imageUrl: '/images/placeholder.jpg',
-    bgColor: 'bg-outline-variant',
-  },
+const BG_COLORS = [
+  'bg-primary-fixed',
+  'bg-primary-fixed-dim',
+  'bg-outline-variant',
+  'bg-surface-container',
 ];
 
-export default function MdRecommendation() {
+interface MdRecommendationProps {
+  products: Product[];
+}
+
+export default function MdRecommendation({ products }: MdRecommendationProps) {
+  const items: CircularRecommendation[] = products.map((p, i) => ({
+    id: p.id,
+    label: p.name,
+    imageUrl: p.imageUrl,
+    bgColor: BG_COLORS[i % BG_COLORS.length],
+  }));
+
+  if (items.length === 0) return null;
+
   return (
     <>
       {/* Desktop */}
@@ -45,7 +38,7 @@ export default function MdRecommendation() {
           >
             <span className="material-symbols-outlined">chevron_left</span>
           </button>
-          {DUMMY_RECS.map((item) => (
+          {items.map((item) => (
             <CircularItem key={item.id} item={item} />
           ))}
           <button
@@ -67,7 +60,7 @@ export default function MdRecommendation() {
           </p>
         </div>
         <div className="pl-margin-mobile flex space-x-6 overflow-x-auto no-scrollbar pb-4 pr-margin-mobile">
-          {DUMMY_RECS.map((item) => (
+          {items.map((item) => (
             <div key={item.id} className="flex flex-col items-center flex-shrink-0 w-24">
               <div className="w-20 h-20 rounded-full bg-surface-container overflow-hidden mb-3 shadow-sm border border-outline-variant/30">
                 <Image
@@ -75,7 +68,6 @@ export default function MdRecommendation() {
                   alt={item.label}
                   width={80}
                   height={80}
-                  unoptimized
                   className="w-full h-full object-cover"
                 />
               </div>

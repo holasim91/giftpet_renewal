@@ -47,6 +47,7 @@ model Product {
   animalCategory  AnimalCategory?
   productCategory ProductCategory
   badges          String[]
+  isMdPick        Boolean          @default(false)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   cart            Cart[]

@@ -25,6 +25,100 @@
 
 <!-- 실제 세션 기록은 여기서부터 -->
 
+## 2026-06-02 세션 14
+
+### 완료
+- `prisma/schema.prisma` — `Product` 모델에 `isMdPick Boolean @default(false)` 필드 추가
+- `prisma db push` — Supabase DB에 컬럼 반영
+- `prisma generate` — Prisma 클라이언트 재생성 (isMdPick 타입 포함)
+- `prisma/seed.ts` — 4개 상품에 `isMdPick: true` 지정 후 seed 재실행
+  - 오리젠 오리지날 그레인프리 소고기&연어 800g (강아지 사료 BEST)
+  - 져스트 드라이드 치킨 저키 120g (강아지 간식 BEST)
+  - 트럼펫 소프트클로버 이뮨부스터 60g (강아지 영양제 BEST)
+  - 이나바 치루 참치&닭 14g×4 (고양이 간식 BEST)
+- `components/ui/CircularItem.tsx` — 원형 이미지 꽉 채움 수정
+  - 기존: inner wrapper `md:w-16 md:h-16` 인셋 + `md:object-contain` → 이미지 작게 떠 있는 버그
+  - 수정: 부모 div에 `relative` 이동, inner wrapper 제거, `Image fill + object-cover` 직접 적용
+- `components/sections/HeroBanner.tsx` — 배경 이미지 Unsplash 실사 이미지로 교체
+  - `images.unsplash.com/photo-1546377791-2e01b4449bf0` (강아지+고양이 함께 있는 사진)
+  - `unoptimized` 제거, `fill + object-cover` 유지
+- `next.config.ts` — `images.unsplash.com` remotePatterns 허용 (이전 세션에서 추가, 이번 세션에서 실제 사용)
+
+### 현재 상태
+- `pnpm build`: 정상 (17개 라우트)
+- `pnpm dev`: 정상
+- 히어로 배너: Unsplash 실사 이미지 표시
+- MD 추천 원형 이미지: fill+object-cover로 꽉 채움
+- 더미 데이터: 전 페이지 제거 완료
+- 마지막 수정 파일: `CHANGELOG.md`
+
+## 2026-06-02 세션 13
+
+### 완료
+- `types/index.ts` — `Product` 인터페이스에 `isMdPick: boolean` 추가 (Prisma 스키마와 동기화)
+- `actions/product.ts` — 두 함수 추가
+  - `getNewArrivals(limit = 8)` — createdAt 내림차순 최신 N개
+  - `getMdPickProducts()` — `isMdPick: true` 상품 전체
+- `components/sections/NewArrivals.tsx` — DUMMY_PRODUCTS 제거, `products: Product[]` props 수신으로 전환
+  - `href="#"` → `<Link href="/shop">` 교체
+  - View More 카드도 `/shop` 링크로 전환
+- `components/sections/MdRecommendation.tsx` — DUMMY_RECS 제거, `products: Product[]` props 수신
+  - `Product[] → CircularRecommendation[]` 매핑 (bgColor 4색 순환: primary-fixed / primary-fixed-dim / outline-variant / surface-container)
+  - 상품 없을 때 `null` 반환 처리
+- `app/page.tsx` — `async` 서버 컴포넌트 전환, `Promise.all([getNewArrivals(8), getMdPickProducts()])` 병렬 조회, 섹션에 props 전달
+- `app/shop/product/[id]/page.tsx` — 서버 컴포넌트로 완전 교체
+  - `getProductById(id)` 호출, `null`이면 `notFound()` 호출
+  - `ProductDetailClient`에 product prop 전달
+- `app/shop/product/[id]/ProductDetailClient.tsx` — 신규 클라이언트 컴포넌트
+  - 수량·탭·썸네일 `useState` 유지
+  - 실제 product prop 사용: 이름·가격·이미지·배지·discountPrice·브레드크럼 모두 DB 데이터
+  - 배지 배열 전체 렌더링, discountPrice 있으면 취소선 + 할인가 표시
+  - 카테고리 레이블 동적 생성 (animalCategory + productCategory)
+- Prisma 클라이언트 재생성 (`prisma generate`) — isMdPick 필드 클라이언트 반영
+- `pnpm build` 정상 (17개 라우트, 타입 에러 없음)
+- 브라우저 확인: 메인 신상품·MD추천 DB 렌더링, 상세 페이지 실제 데이터 정상 표시
+
+### 미완료 / 다음 세션
+- NextAuth.js 설치 및 회원가입/로그인 구현
+- 장바구니 Server Actions (`actions/cart.ts`)
+
+### 현재 상태
+- `pnpm build`: 정상 (17개 라우트)
+- `pnpm dev`: 정상
+- 더미 데이터: 메인페이지·상품 리스트·상품 상세 모두 제거 완료
+- 마지막 수정 파일: `CHANGELOG.md`
+
+## 2026-06-02 세션 12
+
+### 완료
+- `next.config.ts` — `images.remotePatterns`에 `images.unsplash.com` 추가 (Unsplash 이미지 최적화 허용)
+- `prisma/seed.ts` — imageUrl 전면 교체: 강아지 상품 10개 → 강아지 Unsplash 사진, 고양이 상품 4개 → 고양이 Unsplash 사진
+  - `?w=600&q=80` 파라미터 통일
+  - `badges: [...p.badges]` spread 수정 (as const readonly 타입 에러 해결)
+- `pnpm prisma db seed` 재실행: 기존 14개 삭제 → Unsplash 이미지 14개 재삽입
+- `actions/product.ts` 신규 생성
+  - `getProducts({ animalCategory?, productCategory? })` — Prisma로 카테고리 필터 조회, `orderBy: createdAt desc`
+  - `getProductById(id)` — 단일 상품 조회
+  - `'use server'` 선언으로 클라이언트 컴포넌트에서도 호출 가능
+- 상품 리스트 페이지 13개 전면 교체: DUMMY_PRODUCTS 제거 → `await getProducts({ ... })`로 교체
+  - `/shop`, `/shop/dog`, `/shop/cat`
+  - `/shop/food`, `/shop/treats`, `/shop/supplies`, `/shop/supplements`
+  - `/shop/dog/food`, `/shop/dog/treats`, `/shop/dog/supplies`, `/shop/dog/supplements`
+  - `/shop/cat/treats`, `/shop/cat/supplies`
+- `pnpm build` 정상 통과 (17개 라우트, 타입 에러 없음)
+- 브라우저 확인: `/shop` 총 14개 상품 + Unsplash 이미지 정상 렌더링, `/shop/cat` 총 4개 상품 + 고양이 이미지 정상 렌더링
+
+### 미완료 / 다음 세션
+- 상품 상세 페이지 (`/shop/product/[id]`) DB 연동 (`getProductById` 적용)
+- NextAuth.js 설치 및 회원가입/로그인 구현
+- 장바구니 Server Actions (`actions/cart.ts`)
+
+### 현재 상태
+- `pnpm build`: 정상 (17개 라우트)
+- `pnpm dev`: 정상
+- Supabase DB: Product 14개, Unsplash 이미지 URL 적용 완료
+- 마지막 수정 파일: `CHANGELOG.md`
+
 ## 2026-06-02 세션 11
 
 ### 완료

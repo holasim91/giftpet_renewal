@@ -24,6 +24,7 @@ export interface Product {
   animalCategory: AnimalCategory | null; // null = 전체 카테고리
   productCategory: ProductCategory;
   badges: string[];
+  isMdPick: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
