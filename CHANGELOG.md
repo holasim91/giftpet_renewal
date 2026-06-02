@@ -25,6 +25,29 @@
 
 <!-- 실제 세션 기록은 여기서부터 -->
 
+## 2026-06-02 세션 9
+
+### 완료
+- `prisma/schema.prisma` — 스키마 전면 교체 (사용자 지정 스키마 적용)
+  - Product: id/name/description?/detailContent?/price/discountPrice?/imageUrl/stock/animalCategory?/productCategory/badges(String[])/timestamps
+  - User: id/email/password(필수)/name?/createdAt (role 제거, updatedAt 제거)
+  - Cart: id/userId/productId/quantity/createdAt — 단순 플랫 구조 (CartItem 분리 없음)
+  - Badge enum 제거 → badges를 String[]로 변경
+  - Role enum 제거
+  - `prisma generate` 재실행 → 타입 재생성 완료
+- `.env.local.example` / `lib/prisma.ts` / `lib/supabase.ts` — 세션 8에서 생성된 파일 그대로 유지 (변경 불필요)
+
+### 미완료 / 다음 세션
+- `.env.local` 실제 값 채우기 (사용자가 직접 입력)
+- `prisma migrate dev` 실행 (Supabase DB에 테이블 생성)
+- 더미 데이터 → Server Actions으로 교체
+- NextAuth.js 설치 및 인증 구현
+
+### 현재 상태
+- `pnpm build` / TypeScript: 정상
+- DB: 미연결 (환경변수 미설정)
+- 마지막 수정 파일: `CHANGELOG.md`
+
 ## 2026-06-02 세션 8
 
 ### 완료
