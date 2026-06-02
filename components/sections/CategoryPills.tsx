@@ -4,11 +4,11 @@ interface Category {
 }
 
 const CATEGORIES: Category[] = [
-  { label: 'All', active: true },
-  { label: 'Dogs' },
-  { label: 'Cats' },
-  { label: 'Toys' },
-  { label: 'Health' },
+  { label: '전체', active: true },
+  { label: '강아지' },
+  { label: '고양이' },
+  { label: '용품' },
+  { label: '건강' },
 ];
 
 export default function CategoryPills() {

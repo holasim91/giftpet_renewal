@@ -4,51 +4,51 @@ import type { Product } from '@/types';
 const DUMMY_PRODUCTS: Product[] = [
   {
     id: '1',
-    name: 'Organic Salmon Cat Treats',
+    name: '오가닉 연어 고양이 간식 100g',
     price: 12990,
-    imageUrl: '/images/placeholder.svg',
+    imageUrl: '/images/placeholder.jpg',
     badges: ['NEW', 'BEST'],
-    category: 'Treats',
+    category: '고양이 간식',
   },
   {
     id: '2',
-    name: 'Premium Orthopedic Dog Bed - Grey',
+    name: '프리미엄 정형외과 강아지 침대 그레이',
     price: 89990,
-    imageUrl: '/images/placeholder.svg',
+    imageUrl: '/images/placeholder.jpg',
     badges: ['NEW'],
-    category: 'Beds',
+    category: '강아지 용품',
   },
   {
     id: '3',
-    name: 'Smart Pet Water Fountain',
+    name: '스마트 자동 급수기 1.8L',
     price: 45990,
-    imageUrl: '/images/placeholder.svg',
+    imageUrl: '/images/placeholder.jpg',
     badges: ['NEW'],
-    category: 'Accessories',
+    category: '생활 용품',
   },
   {
     id: '4',
-    name: 'Durable Chew Toy Set - Large',
+    name: '내구성 츄잉 장난감 세트 L',
     price: 24990,
-    imageUrl: '/images/placeholder.svg',
+    imageUrl: '/images/placeholder.jpg',
     badges: ['NEW'],
-    category: 'Toys',
+    category: '강아지 장난감',
   },
   {
     id: '5',
-    name: 'Natural Grain-Free Dog Food 5kg',
+    name: '내추럴 그레인프리 강아지 사료 5kg',
     price: 52000,
-    imageUrl: '/images/placeholder.svg',
+    imageUrl: '/images/placeholder.jpg',
     badges: ['BEST'],
-    category: 'Food',
+    category: '강아지 사료',
   },
   {
     id: '6',
-    name: 'Cat Tree Tower with Scratching Post',
+    name: '고양이 스크래쳐 캣타워 하우스',
     price: 78000,
-    imageUrl: '/images/placeholder.svg',
+    imageUrl: '/images/placeholder.jpg',
     badges: [],
-    category: 'Furniture',
+    category: '고양이 용품',
   },
 ];
 
@@ -58,20 +58,20 @@ export default function NewArrivals() {
 
       {/* Section header */}
       <div className="flex justify-between items-center md:items-end mb-4 md:mb-6 px-margin-mobile md:px-0">
-        <h2 className="text-headline-sm md:text-headline-md text-on-surface">New Arrivals</h2>
+        <h2 className="text-headline-sm md:text-headline-md text-on-surface">신상품</h2>
 
         {/* Desktop: prev/next carousel buttons */}
         <div className="hidden md:flex space-x-2">
           <button
             type="button"
-            aria-label="Previous"
+            aria-label="이전"
             className="w-10 h-10 rounded-full border border-surface-container-high flex items-center justify-center hover:border-primary-container hover:text-primary-container transition-colors"
           >
             <span className="material-symbols-outlined">chevron_left</span>
           </button>
           <button
             type="button"
-            aria-label="Next"
+            aria-label="다음"
             className="w-10 h-10 rounded-full border border-surface-container-high flex items-center justify-center hover:border-primary-container hover:text-primary-container transition-colors"
           >
             <span className="material-symbols-outlined">chevron_right</span>
@@ -80,7 +80,7 @@ export default function NewArrivals() {
 
         {/* Mobile: View All link */}
         <a href="#" className="md:hidden text-label-sm text-primary hover:underline">
-          View All
+          전체 보기
         </a>
       </div>
 
@@ -97,7 +97,7 @@ export default function NewArrivals() {
               <span className="material-symbols-outlined text-4xl text-tertiary">more_horiz</span>
             </div>
             <h3 className="text-body-md text-on-surface min-h-[48px] mb-2 font-medium text-center">
-              View More New Arrivals
+              신상품 더 보기
             </h3>
           </div>
         </div>
