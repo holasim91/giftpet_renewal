@@ -1,12 +1,15 @@
 'use client';
 
 // 수량·탭·썸네일 상태 필요 → 'use client' (AGENTS.md 허용)
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Footer from '@/components/layout/Footer';
 import type { Product } from '@/types';
 import { PRODUCT_CATEGORY_LABELS, ANIMAL_CATEGORY_LABELS } from '@/types';
+import { addToCart } from '@/actions/cart';
+import { useToast } from '@/components/ui/Toast';
 
 const BADGE_STYLE: Record<string, string> = {
   NEW: 'bg-primary-container text-on-primary',
@@ -32,6 +35,21 @@ export default function ProductDetailClient({ product }: Props) {
   const [activeThumb, setActiveThumb] = useState(0);
   const [desktopTab, setDesktopTab] = useState(0);
   const [mobileTab, setMobileTab] = useState(0);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  const handleAddToCart = () => {
+    startTransition(async () => {
+      const result = await addToCart(product.id, qty);
+      if (result?.error) {
+        router.push('/auth/login');
+      } else {
+        showToast('장바구니에 추가되었습니다', 'success');
+        router.refresh();
+      }
+    });
+  };
 
   const thumbnails = [product.imageUrl];
   const firstBadge = product.badges[0];
@@ -144,7 +162,7 @@ export default function ProductDetailClient({ product }: Props) {
             {/* Specs */}
             <div className="flex flex-col gap-3 text-body-md text-on-surface-variant">
               {[
-                { label: '배송비', value: '₩3,000 (₩50,000 이상 무료)' },
+                { label: '배송비', value: '₩3,000 (₩100,000 이상 무료)' },
                 { label: '카테고리', value: categoryLabel },
               ].map(({ label, value }) => (
                 <div key={label} className="grid grid-cols-[110px_1fr] gap-4">
@@ -157,44 +175,27 @@ export default function ProductDetailClient({ product }: Props) {
             {/* Options & Action box */}
             <div className="flex flex-col gap-4 bg-surface-container-lowest p-6 rounded-xl border border-surface-variant shadow-sm">
 
-              {/* Select */}
-              <div className="flex flex-col gap-2">
-                <label className="text-label-md text-on-surface">옵션 선택</label>
-                <select className="w-full bg-surface-container-low border border-surface-variant rounded-lg p-3 text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none">
-                  <option>옵션을 선택하세요</option>
-                  <option>{product.name} — ₩{product.price.toLocaleString()}</option>
-                </select>
-              </div>
-
-              {/* Selected item row */}
-              <div className="bg-surface border border-surface-variant rounded-lg p-4 flex justify-between items-center">
-                <div className="flex flex-col gap-1">
-                  <span className="text-label-sm text-secondary">선택 옵션</span>
-                  <span className="text-body-md font-medium line-clamp-1">{product.name}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border border-surface-variant rounded-lg bg-surface-container-lowest overflow-hidden">
-                    <button
-                      type="button"
-                      aria-label="수량 감소"
-                      className="w-8 h-8 flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
-                      onClick={() => setQty(Math.max(1, qty - 1))}
-                    >
-                      <span className="material-symbols-outlined text-[18px]">remove</span>
-                    </button>
-                    <span className="w-10 text-center text-body-md font-medium">{qty}</span>
-                    <button
-                      type="button"
-                      aria-label="수량 증가"
-                      className="w-8 h-8 flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
-                      onClick={() => setQty(qty + 1)}
-                    >
-                      <span className="material-symbols-outlined text-[18px]">add</span>
-                    </button>
-                  </div>
-                  <span className="text-body-md font-bold min-w-[72px] text-right">
-                    ₩{(product.price * qty).toLocaleString()}
-                  </span>
+              {/* Quantity */}
+              <div className="flex items-center justify-between">
+                <span className="text-label-md text-on-surface">수량</span>
+                <div className="flex items-center border border-surface-variant rounded-lg bg-surface-container-lowest overflow-hidden">
+                  <button
+                    type="button"
+                    aria-label="수량 감소"
+                    className="w-8 h-8 flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">remove</span>
+                  </button>
+                  <span className="w-10 text-center text-body-md font-medium">{qty}</span>
+                  <button
+                    type="button"
+                    aria-label="수량 증가"
+                    className="w-8 h-8 flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
+                    onClick={() => setQty(qty + 1)}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">add</span>
+                  </button>
                 </div>
               </div>
 
@@ -220,9 +221,11 @@ export default function ProductDetailClient({ product }: Props) {
                 </button>
                 <button
                   type="button"
-                  className="flex-1 h-12 bg-inverse-surface text-on-primary rounded-lg text-label-md hover:opacity-90 transition-opacity"
+                  onClick={handleAddToCart}
+                  disabled={isPending}
+                  className="flex-1 h-12 bg-inverse-surface text-on-primary rounded-lg text-label-md hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  ADD TO CART
+                  {isPending ? '추가 중...' : 'ADD TO CART'}
                 </button>
                 <button
                   type="button"
@@ -326,7 +329,7 @@ export default function ProductDetailClient({ product }: Props) {
           {/* Meta */}
           <div className="mt-6 border-t border-surface-variant pt-4 flex flex-col gap-3">
             {[
-              { label: '배송비', value: '₩3,000 (₩50,000 이상 무료)' },
+              { label: '배송비', value: '₩3,000 (₩100,000 이상 무료)' },
               { label: '카테고리', value: categoryLabel },
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between items-center">
@@ -420,10 +423,12 @@ export default function ProductDetailClient({ product }: Props) {
         <div className="px-margin-mobile py-3 flex gap-3 bg-surface-container-lowest">
           <button
             type="button"
-            className="flex-1 py-3 px-4 rounded-lg border border-outline-variant text-on-surface text-label-md flex justify-center items-center gap-2 hover:bg-surface-container-low active:scale-95 transition-all"
+            onClick={handleAddToCart}
+            disabled={isPending}
+            className="flex-1 py-3 px-4 rounded-lg border border-outline-variant text-on-surface text-label-md flex justify-center items-center gap-2 hover:bg-surface-container-low active:scale-95 transition-all disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[20px]">shopping_cart</span>
-            <span>장바구니</span>
+            <span>{isPending ? '추가 중...' : '장바구니'}</span>
           </button>
           <button
             type="button"

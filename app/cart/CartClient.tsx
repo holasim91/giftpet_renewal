@@ -11,6 +11,7 @@ import {
 } from '@/actions/cart';
 import { useToast } from '@/components/ui/Toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import AlertModal from '@/components/ui/AlertModal';
 
 const SHIPPING_FEE = 3000;
 const FREE_SHIPPING_THRESHOLD = 100000;
@@ -33,8 +34,9 @@ export default function CartClient({ initialItems }: Props) {
     (state, { cartId, newQty }: { cartId: string; newQty: number }) =>
       state.map((i) => (i.id === cartId ? { ...i, quantity: newQty } : i)),
   );
+  // 비활성 상품은 초기 checked에서 제외
   const [checked, setChecked] = useState<Set<string>>(
-    new Set(initialItems.map((i) => i.id)),
+    new Set(initialItems.filter((i) => i.product.isActive).map((i) => i.id)),
   );
   const [, startTransition] = useTransition(); // addOptimistic 전용
   const [quantityPendingIds, setQuantityPendingIds] = useState<Set<string>>(new Set());
@@ -46,8 +48,12 @@ export default function CartClient({ initialItems }: Props) {
     | { type: 'single'; cartId: string }
     | { type: 'selected'; count: number };
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
+  const [stockAlertOpen, setStockAlertOpen] = useState(false);
 
-  // 합계 계산은 optimisticItems 기준 (수량 변경 즉시 반영)
+  // 활성 상품만 선택 대상으로 계산
+  const activeItems = optimisticItems.filter((i) => i.product.isActive);
+
+  // 합계 계산: 체크된 항목 중 활성 상품만 (isActive false는 checked에 들어갈 수 없어 자연 제외)
   const selectedItems = optimisticItems.filter((i) => checked.has(i.id));
   const subtotal = selectedItems.reduce(
     (sum, i) => sum + (i.product.discountPrice ?? i.product.price) * i.quantity,
@@ -63,10 +69,10 @@ export default function CartClient({ initialItems }: Props) {
   const shippingFee = subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
   const total = subtotal + shippingFee;
 
-  const allChecked = optimisticItems.length > 0 && checked.size === optimisticItems.length;
+  const allChecked = activeItems.length > 0 && checked.size === activeItems.length;
 
   const toggleAll = (v: boolean) =>
-    setChecked(v ? new Set(optimisticItems.map((i) => i.id)) : new Set());
+    setChecked(v ? new Set(activeItems.map((i) => i.id)) : new Set());
 
   const toggleOne = (id: string) =>
     setChecked((prev) => {
@@ -127,6 +133,11 @@ export default function CartClient({ initialItems }: Props) {
 
   const handleQuantity = (cartId: string, newQty: number) => {
     if (newQty < 1) return;
+    const stock = items.find((i) => i.id === cartId)?.product.stock ?? Infinity;
+    if (newQty > stock) {
+      setStockAlertOpen(true);
+      return;
+    }
     setQuantityPendingIds((prev) => new Set(prev).add(cartId));
     startTransition(async () => {
       addOptimistic({ cartId, newQty });
@@ -200,7 +211,7 @@ export default function CartClient({ initialItems }: Props) {
                   className="w-5 h-5 rounded border-outline text-primary focus:ring-primary"
                 />
                 <span className="text-label-md text-on-surface">
-                  전체 선택 ({checked.size}/{optimisticItems.length})
+                  전체 선택 ({checked.size}/{activeItems.length})
                 </span>
               </label>
               <button
@@ -231,23 +242,28 @@ export default function CartClient({ initialItems }: Props) {
 
             {/* Cart items */}
             {optimisticItems.map((item) => {
+              const isInactive = !item.product.isActive;
               const effectivePrice = item.product.discountPrice ?? item.product.price;
               return (
                 <div
                   key={item.id}
-                  className="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.1)] transition-shadow"
+                  className={`bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] transition-shadow ${isInactive ? 'opacity-60' : 'hover:shadow-[0px_8px_30px_rgba(0,0,0,0.1)]'}`}
                 >
                   {/* Desktop row */}
                   <div className="hidden md:flex p-6 items-center">
                     <div className="w-12 flex justify-center">
                       <input
                         type="checkbox"
-                        checked={checked.has(item.id)}
-                        onChange={() => toggleOne(item.id)}
-                        className="rounded border-outline text-primary focus:ring-primary"
+                        checked={!isInactive && checked.has(item.id)}
+                        onChange={() => !isInactive && toggleOne(item.id)}
+                        disabled={isInactive}
+                        className="rounded border-outline text-primary focus:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
                       />
                     </div>
-                    <div className="flex-1 px-4 flex items-center gap-6">
+                    <Link
+                      href={`/shop/product/${item.product.id}`}
+                      className="flex-1 px-4 flex items-center gap-6 hover:opacity-80 transition-opacity"
+                    >
                       <div className="w-24 h-24 bg-surface-container-low rounded-lg overflow-hidden flex-shrink-0 relative">
                         <Image
                           src={item.product.imageUrl}
@@ -261,25 +277,37 @@ export default function CartClient({ initialItems }: Props) {
                         <p className="text-body-md font-semibold mb-1 line-clamp-2">
                           {item.product.name}
                         </p>
-                        {item.product.discountPrice && (
-                          <p className="text-label-sm text-secondary line-through">
-                            {item.product.price.toLocaleString()}원
-                          </p>
+                        {isInactive ? (
+                          <p className="text-label-sm text-error font-medium">판매 종료된 상품입니다</p>
+                        ) : (
+                          item.product.discountPrice && (
+                            <p className="text-label-sm text-secondary line-through">
+                              {item.product.price.toLocaleString()}원
+                            </p>
+                          )
                         )}
                       </div>
-                    </div>
+                    </Link>
                     <div className="w-32 flex justify-center">
-                      <QuantityControl
-                        quantity={item.quantity}
-                        onDecrease={() => handleQuantity(item.id, item.quantity - 1)}
-                        onIncrease={() => handleQuantity(item.id, item.quantity + 1)}
-                        disabled={quantityPendingIds.has(item.id)}
-                      />
+                      {isInactive ? (
+                        <span className="text-label-sm text-tertiary">—</span>
+                      ) : (
+                        <QuantityControl
+                          quantity={item.quantity}
+                          onDecrease={() => handleQuantity(item.id, item.quantity - 1)}
+                          onIncrease={() => handleQuantity(item.id, item.quantity + 1)}
+                          disabled={quantityPendingIds.has(item.id)}
+                        />
+                      )}
                     </div>
                     <div className="w-32 text-center">
-                      <span className="text-headline-sm font-bold">
-                        {(effectivePrice * item.quantity).toLocaleString()}원
-                      </span>
+                      {isInactive ? (
+                        <span className="text-label-sm text-tertiary">—</span>
+                      ) : (
+                        <span className="text-headline-sm font-bold">
+                          {(effectivePrice * item.quantity).toLocaleString()}원
+                        </span>
+                      )}
                     </div>
                     <div className="w-12 flex justify-end">
                       <button
@@ -308,12 +336,16 @@ export default function CartClient({ initialItems }: Props) {
                     <div className="pt-1">
                       <input
                         type="checkbox"
-                        checked={checked.has(item.id)}
-                        onChange={() => toggleOne(item.id)}
-                        className="w-5 h-5 rounded border-outline text-primary focus:ring-primary"
+                        checked={!isInactive && checked.has(item.id)}
+                        onChange={() => !isInactive && toggleOne(item.id)}
+                        disabled={isInactive}
+                        className="w-5 h-5 rounded border-outline text-primary focus:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
                       />
                     </div>
-                    <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-surface-container-low relative">
+                    <Link
+                      href={`/shop/product/${item.product.id}`}
+                      className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-surface-container-low relative hover:opacity-80 transition-opacity"
+                    >
                       <Image
                         src={item.product.imageUrl}
                         alt={item.product.name}
@@ -321,23 +353,30 @@ export default function CartClient({ initialItems }: Props) {
                         unoptimized
                         className="object-cover"
                       />
-                    </div>
+                    </Link>
                     <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <p className="text-body-md font-semibold line-clamp-2 pr-6">
+                      <Link
+                        href={`/shop/product/${item.product.id}`}
+                        className="text-body-md font-semibold line-clamp-2 pr-6 hover:text-primary transition-colors"
+                      >
                         {item.product.name}
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-headline-sm font-bold text-primary">
-                          {effectivePrice.toLocaleString()}원
-                        </span>
-                        <QuantityControl
-                          quantity={item.quantity}
-                          onDecrease={() => handleQuantity(item.id, item.quantity - 1)}
-                          onIncrease={() => handleQuantity(item.id, item.quantity + 1)}
-                          disabled={quantityPendingIds.has(item.id)}
-                          compact
-                        />
-                      </div>
+                      </Link>
+                      {isInactive ? (
+                        <p className="text-label-sm text-error font-medium mt-2">판매 종료된 상품입니다</p>
+                      ) : (
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-headline-sm font-bold text-primary">
+                            {effectivePrice.toLocaleString()}원
+                          </span>
+                          <QuantityControl
+                            quantity={item.quantity}
+                            onDecrease={() => handleQuantity(item.id, item.quantity - 1)}
+                            onIncrease={() => handleQuantity(item.id, item.quantity + 1)}
+                            disabled={quantityPendingIds.has(item.id)}
+                            compact
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -434,6 +473,11 @@ export default function CartClient({ initialItems }: Props) {
         isPending={isSelectedDeleting || deletePendingIds.size > 0}
         onConfirm={confirmDelete}
         onCancel={() => setPendingDelete(null)}
+      />
+      <AlertModal
+        isOpen={stockAlertOpen}
+        message="구매 가능한 수량을 초과했습니다."
+        onClose={() => setStockAlertOpen(false)}
       />
     </main>
   );

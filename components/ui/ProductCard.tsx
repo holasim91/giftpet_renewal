@@ -8,8 +8,46 @@ interface ProductCardProps {
   product: Product;
 }
 
+function StockBadge({ stock }: { stock: number }) {
+  if (stock === 0) {
+    return (
+      <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-surface-container-highest text-secondary">
+        품절
+      </span>
+    );
+  }
+  if (stock <= 5) {
+    return (
+      <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-error text-on-primary">
+        품절임박!
+      </span>
+    );
+  }
+  return null;
+}
+
+function StatusBadge({ badges }: { badges: string[] }) {
+  if (badges.includes('BEST')) {
+    return (
+      <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-inverse-surface text-inverse-on-surface">
+        BEST
+      </span>
+    );
+  }
+  if (badges.includes('NEW')) {
+    return (
+      <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-primary-container text-on-primary">
+        NEW
+      </span>
+    );
+  }
+  return null;
+}
+
 export default function ProductCard({ product }: ProductCardProps) {
   const formattedPrice = product.price.toLocaleString();
+  const isSoldOut = product.stock === 0;
+  const hasStockIssue = product.stock <= 5; // 0~5: 재고 배지 표시
 
   return (
     <Link
@@ -48,22 +86,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, 280px"
           />
 
-          {/* Badges */}
-          {product.badges.length > 0 && (
-            <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 md:top-4 md:left-4 md:flex-row md:space-x-1">
-              {product.badges.map((badge) => (
-                <span
-                  key={badge}
-                  className={[
-                    'text-[10px] font-bold px-2 py-0.5 md:py-1 rounded md:rounded-sm uppercase tracking-wider',
-                    badge === 'NEW'
-                      ? 'bg-primary-container text-on-primary'
-                      : 'bg-surface-variant text-on-surface md:bg-yellow-500 md:text-white',
-                  ].join(' ')}
-                >
-                  {badge}
-                </span>
-              ))}
+          {/* 좌측 상단 */}
+          <div className="absolute top-3 left-3 z-10">
+            {hasStockIssue ? (
+              <StockBadge stock={product.stock} />
+            ) : (
+              <StatusBadge badges={product.badges} />
+            )}
+          </div>
+          {/* 우측 상단: 재고 이슈 있을 때만 상태 배지 */}
+          {hasStockIssue && (
+            <div className="absolute top-3 right-3 z-10">
+              <StatusBadge badges={product.badges} />
             </div>
           )}
         </div>
@@ -100,7 +134,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
 
             {/* Desktop: Add to Cart */}
-            <AddToCartButton productId={product.id} />
+            <AddToCartButton productId={product.id} disabled={isSoldOut} />
           </div>
         </div>
       </div>

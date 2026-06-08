@@ -7,15 +7,17 @@ import { useToast } from '@/components/ui/Toast';
 
 interface Props {
   productId: string;
+  disabled?: boolean;
 }
 
-export default function AddToCartButton({ productId }: Props) {
+export default function AddToCartButton({ productId, disabled = false }: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { showToast } = useToast();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (disabled) return;
     startTransition(async () => {
       const result = await addToCart(productId, 1);
       if (result?.error) {
@@ -26,6 +28,14 @@ export default function AddToCartButton({ productId }: Props) {
       }
     });
   };
+
+  if (disabled) {
+    return (
+      <div className="hidden md:block bg-surface-container text-tertiary px-4 py-1.5 rounded-full text-[12px] text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-not-allowed select-none">
+        품절
+      </div>
+    );
+  }
 
   return (
     <div

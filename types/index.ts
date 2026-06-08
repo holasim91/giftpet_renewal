@@ -25,6 +25,7 @@ export interface Product {
   productCategory: ProductCategory;
   badges: string[];
   isMdPick: boolean;
+  isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

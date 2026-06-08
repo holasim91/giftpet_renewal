@@ -5,6 +5,33 @@
 
 ---
 
+## 2026-06-08 세션 20
+
+### 완료
+- `prisma/schema.prisma` — `Product` 모델에 `isActive Boolean @default(true)` 추가
+- `types/index.ts` — `Product` 인터페이스에 `isActive: boolean` 추가
+- `prisma db push` — Supabase DB에 컬럼 반영 (기존 상품 전체 isActive = true)
+- `prisma generate` — Prisma 클라이언트 재생성
+- `actions/product.ts` — 모든 조회 함수에 `isActive: true` 필터 추가
+  - `getProducts()`, `getNewArrivals()`, `getMdPickProducts()` — where 조건 추가
+  - `getProductById()` — `findUnique({ where: { id, isActive: true } })` → isActive=false 시 null 반환 → 페이지에서 notFound() 호출
+- `actions/cart.ts` — `CartItemWithProduct` 타입과 `getCart()` select에 `isActive` 추가
+- `app/cart/CartClient.tsx` — isActive=false 상품 처리
+  - 초기 checked 상태: 비활성 상품 제외
+  - 전체선택 카운터: 활성 상품만 집계
+  - 체크박스: disabled + opacity-40
+  - 수량 컨트롤: 대시(—)로 대체
+  - 금액 표시: 대시(—)로 대체
+  - "판매 종료된 상품입니다" 텍스트 표시 (데스크톱/모바일 모두)
+  - 카드 opacity: 0.6으로 dimmed 처리
+  - 결제 금액: 비활성 상품 자동 제외
+
+### 현재 상태
+- `pnpm build`: 정상 (20개 라우트, TypeScript 에러 없음)
+- 마지막 수정 파일: `CHANGELOG.md`
+
+---
+
 ## 2026-06-05 세션 19
 
 ### 완료

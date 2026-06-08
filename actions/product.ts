@@ -11,6 +11,7 @@ interface GetProductsParams {
 export async function getProducts({ animalCategory, productCategory }: GetProductsParams = {}) {
   return prisma.product.findMany({
     where: {
+      isActive: true,
       ...(animalCategory !== undefined && { animalCategory }),
       ...(productCategory !== undefined && { productCategory }),
     },
@@ -20,12 +21,13 @@ export async function getProducts({ animalCategory, productCategory }: GetProduc
 
 export async function getProductById(id: string) {
   return prisma.product.findUnique({
-    where: { id },
+    where: { id, isActive: true },
   });
 }
 
 export async function getNewArrivals(limit = 8) {
   return prisma.product.findMany({
+    where: { isActive: true },
     orderBy: { createdAt: 'desc' },
     take: limit,
   });
@@ -33,7 +35,7 @@ export async function getNewArrivals(limit = 8) {
 
 export async function getMdPickProducts() {
   return prisma.product.findMany({
-    where: { isMdPick: true },
+    where: { isMdPick: true, isActive: true },
     orderBy: { createdAt: 'desc' },
   });
 }
