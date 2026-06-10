@@ -2,16 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types';
 import { PRODUCT_CATEGORY_LABELS } from '@/types';
+import { BADGE_STYLES } from '@/lib/constants';
 
 interface ProductGridProps {
   products: Product[];
 }
-
-const BADGE_STYLES: Record<string, string> = {
-  NEW: 'bg-primary-container text-on-primary',
-  BEST: 'bg-[#343434] text-white',
-  HIT: 'bg-[#343434] text-white',
-};
 
 function ShopProductCard({ product }: { product: Product }) {
   return (

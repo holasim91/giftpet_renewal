@@ -1,11 +1,6 @@
 import type { Product } from '@/types';
 import { PRODUCT_CATEGORY_LABELS, ANIMAL_CATEGORY_LABELS } from '@/types';
-
-const BADGE_STYLE: Record<string, string> = {
-  NEW: 'bg-primary-container text-on-primary',
-  BEST: 'bg-[#343434] text-white',
-  HIT: 'bg-[#343434] text-white',
-};
+import { BADGE_STYLES } from '@/lib/constants';
 
 interface Props {
   product: Product;
@@ -32,7 +27,7 @@ export default function ProductInfo({ product }: Props) {
               {product.badges.map((badge) => (
                 <span
                   key={badge}
-                  className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${BADGE_STYLE[badge] ?? 'bg-surface-container text-on-surface-variant'}`}
+                  className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${BADGE_STYLES[badge] ?? 'bg-surface-container text-on-surface-variant'}`}
                 >
                   {badge}
                 </span>

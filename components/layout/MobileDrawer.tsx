@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { Session } from 'next-auth';
 import SignOutButton from '@/components/ui/SignOutButton';
+import { NAV_CATEGORIES, PRODUCT_CATEGORIES } from '@/lib/constants';
+import type { NavCategory } from '@/lib/constants';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -11,26 +13,7 @@ interface MobileDrawerProps {
   session: Session | null;
 }
 
-const DOG_ITEMS = [
-  { label: '사료',   href: '/shop/dog/food' },
-  { label: '간식',   href: '/shop/dog/treats' },
-  { label: '용품',   href: '/shop/dog/supplies' },
-  { label: '영양제', href: '/shop/dog/supplements' },
-];
-
-const CAT_ITEMS = [
-  { label: '간식', href: '/shop/cat/treats' },
-  { label: '용품', href: '/shop/cat/supplies' },
-];
-
-const CATEGORY_LINKS = [
-  { label: '사료',   href: '/shop/food' },
-  { label: '간식',   href: '/shop/treats' },
-  { label: '용품',   href: '/shop/supplies' },
-  { label: '영양제', href: '/shop/supplements' },
-];
-
-type AnimalKey = 'dog' | 'cat';
+type AnimalKey = NavCategory['key'];
 
 export default function MobileDrawer({ isOpen, onClose, session }: MobileDrawerProps) {
   const displayName = session?.user?.name ?? session?.user?.email?.split('@')[0];
@@ -85,80 +68,48 @@ export default function MobileDrawer({ isOpen, onClose, session }: MobileDrawerP
             모든 카테고리
           </Link>
 
-          {/* 강아지 — 아코디언 */}
-          <div className="border-b border-surface-container-high">
-            <button
-              type="button"
-              className="w-full flex items-center justify-between px-4 py-3.5 text-label-md text-on-surface hover:text-primary transition-colors"
-              onClick={() => toggleAnimal('dog')}
-            >
-              강아지
-              <span
-                className={`material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-200 ${
-                  openAnimal === 'dog' ? 'rotate-180' : ''
-                }`}
+          {/* 동물별 카테고리 — 아코디언 */}
+          {NAV_CATEGORIES.map((category) => (
+            <div key={category.key} className="border-b border-surface-container-high">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-4 py-3.5 text-label-md text-on-surface hover:text-primary transition-colors"
+                onClick={() => toggleAnimal(category.key)}
               >
-                expand_more
-              </span>
-            </button>
-            {openAnimal === 'dog' && (
-              <ul className="pb-2 bg-surface-container-lowest">
-                {DOG_ITEMS.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className="flex items-center gap-2 pl-7 pr-4 py-2.5 text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                      onClick={onClose}
-                    >
-                      <span className="text-tertiary text-[12px]">ㄴ</span>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* 고양이 — 아코디언 */}
-          <div className="border-b border-surface-container-high">
-            <button
-              type="button"
-              className="w-full flex items-center justify-between px-4 py-3.5 text-label-md text-on-surface hover:text-primary transition-colors"
-              onClick={() => toggleAnimal('cat')}
-            >
-              고양이
-              <span
-                className={`material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-200 ${
-                  openAnimal === 'cat' ? 'rotate-180' : ''
-                }`}
-              >
-                expand_more
-              </span>
-            </button>
-            {openAnimal === 'cat' && (
-              <ul className="pb-2 bg-surface-container-lowest">
-                {CAT_ITEMS.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className="flex items-center gap-2 pl-7 pr-4 py-2.5 text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                      onClick={onClose}
-                    >
-                      <span className="text-tertiary text-[12px]">ㄴ</span>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                {category.heading}
+                <span
+                  className={`material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-200 ${
+                    openAnimal === category.key ? 'rotate-180' : ''
+                  }`}
+                >
+                  expand_more
+                </span>
+              </button>
+              {openAnimal === category.key && (
+                <ul className="pb-2 bg-surface-container-lowest">
+                  {category.items.map((item) => (
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        className="flex items-center gap-2 pl-7 pr-4 py-2.5 text-body-md text-on-surface-variant hover:text-primary transition-colors"
+                        onClick={onClose}
+                      >
+                        <span className="text-tertiary text-[12px]">ㄴ</span>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
 
           {/* 구분선 — 공통 카테고리 */}
           <div className="px-4 pt-4 pb-2">
             <p className="text-label-sm text-tertiary uppercase tracking-wider">카테고리</p>
           </div>
 
-          {CATEGORY_LINKS.map((link) => (
+          {PRODUCT_CATEGORIES.map((link) => (
             <Link
               key={link.label}
               href={link.href}

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { auth } from '@/auth';
 import SignOutButton from '@/components/ui/SignOutButton';
 import { getCartCount } from '@/actions/cart';
+import { NAV_CATEGORIES, PRODUCT_CATEGORIES } from '@/lib/constants';
 
 interface NavItem {
   label: string;
@@ -9,43 +10,11 @@ interface NavItem {
   hasMegaMenu?: boolean;
 }
 
-interface MegaMenuSection {
-  heading: string;
-  href: string;
-  items: { icon: string; label: string; href: string }[];
-}
-
-// '모든 카테고리' hover 시 표시되는 메가메뉴 (2컬럼)
-const MEGA_MENU: MegaMenuSection[] = [
-  {
-    heading: '강아지',
-    href: '/shop/dog',
-    items: [
-      { icon: 'set_meal',      label: '사료',   href: '/shop/dog/food' },
-      { icon: 'pet_supplies',  label: '간식',   href: '/shop/dog/treats' },
-      { icon: 'home',          label: '용품',   href: '/shop/dog/supplies' },
-      { icon: 'healing',       label: '영양제', href: '/shop/dog/supplements' },
-    ],
-  },
-  {
-    heading: '고양이',
-    href: '/shop/cat',
-    items: [
-      { icon: 'cruelty_free', label: '간식', href: '/shop/cat/treats' },
-      { icon: 'toys',         label: '용품', href: '/shop/cat/supplies' },
-    ],
-  },
-];
-
-// GNB 항목 — '모든 카테고리'만 메가메뉴 트리거
+// GNB 항목 — '모든 카테고리'만 메가메뉴 트리거. 나머지는 공유 카테고리 상수에서 파생.
 const NAV_ITEMS: NavItem[] = [
   { label: '모든 카테고리', href: '/shop', hasMegaMenu: true },
-  { label: '강아지',       href: '/shop/dog' },
-  { label: '고양이',       href: '/shop/cat' },
-  { label: '사료',         href: '/shop/food' },
-  { label: '간식',         href: '/shop/treats' },
-  { label: '용품',         href: '/shop/supplies' },
-  { label: '영양제',       href: '/shop/supplements' },
+  ...NAV_CATEGORIES.map((c) => ({ label: c.heading, href: c.href })),
+  ...PRODUCT_CATEGORIES,
 ];
 
 export default async function Header() {
@@ -144,7 +113,7 @@ export default async function Header() {
                 {/* 메가메뉴 — nav 텍스트 너비 기준, 헤더 최하단 정렬 (inner container pb-4=1rem 오프셋) */}
                 <div className="absolute top-[calc(100%+1rem)] left-0 w-full bg-white shadow-[0px_10px_30px_rgba(0,0,0,0.1)] rounded-b-xl border-t border-surface-container opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out z-40 origin-top pt-6 pb-8">
                   <div className="grid grid-cols-2 gap-8 px-8">
-                    {MEGA_MENU.map((section) => (
+                    {NAV_CATEGORIES.map((section) => (
                       <div key={section.heading}>
                         <Link
                           href={section.href}
