@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types';
 import { PRODUCT_CATEGORY_LABELS } from '@/types';
-import { getLeftBadge, getRightBadge, BADGE_STYLES } from '@/lib/badge';
+import { getCardBadge, BADGE_STYLES, BADGE_LABEL } from '@/lib/badge';
+import { getDiscountRate } from '@/lib/price';
 
 interface ProductCardBaseProps {
   product: Product;
@@ -15,9 +16,7 @@ export default function ProductCardBase({ product, children, showQuickAdd = fals
   const isSoldByStock = product.stock === 0;
   const soldOut = isDiscontinued || isSoldByStock;
 
-  const leftBadge = getLeftBadge(product);
-  const rightBadge = getRightBadge(product);
-
+  const badge = getCardBadge(product);
   const quickAddLabel = isDiscontinued ? '판매종료' : isSoldByStock ? '품절' : 'Add to Cart';
 
   return (
@@ -34,23 +33,14 @@ export default function ProductCardBase({ product, children, showQuickAdd = fals
             sizes="(max-width: 768px) 50vw, 25vw"
           />
 
-          {/* 상단: 좌측 배지 + 우측 품절 배지 */}
-          <div className="absolute top-2 left-2 right-2 md:top-3 md:left-3 md:right-3 z-10 flex justify-between items-center">
-            <div>
-              {leftBadge && (
-                <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase ${BADGE_STYLES[leftBadge]}`}>
-                  {leftBadge}
-                </span>
-              )}
+          {/* 배지 */}
+          {badge && (
+            <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
+              <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase ${BADGE_STYLES[badge]}`}>
+                {BADGE_LABEL[badge]}
+              </span>
             </div>
-            <div>
-              {rightBadge && (
-                <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase ${BADGE_STYLES.SOLD_OUT}`}>
-                  {rightBadge}
-                </span>
-              )}
-            </div>
-          </div>
+          )}
 
           {/* Quick Add (ProductGrid 전용) */}
           {showQuickAdd && (
@@ -69,9 +59,25 @@ export default function ProductCardBase({ product, children, showQuickAdd = fals
           <h3 className="text-body-md text-on-surface line-clamp-2 overflow-hidden text-ellipsis leading-snug">
             {product.name}
           </h3>
-          <p className="text-headline-sm text-on-surface font-bold mt-2">
-            {product.price.toLocaleString()}원
-          </p>
+          {product.discountPrice ? (
+            <div className="mt-2 space-y-0.5">
+              <p className="text-headline-sm text-primary font-bold">
+                {product.discountPrice.toLocaleString()}원
+              </p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-label-sm text-tertiary line-through">
+                  {product.price.toLocaleString()}원
+                </span>
+                <span className="text-label-sm text-primary font-bold">
+                  {getDiscountRate(product.price, product.discountPrice)}% 할인
+                </span>
+              </div>
+            </div>
+          ) : (
+            <p className="text-headline-sm text-on-surface font-bold mt-2">
+              {product.price.toLocaleString()}원
+            </p>
+          )}
         </div>
       </Link>
 

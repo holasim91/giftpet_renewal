@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types';
 import { PRODUCT_CATEGORY_LABELS } from '@/types';
-import { getLeftBadge, getRightBadge, BADGE_STYLES } from '@/lib/badge';
+import { getCardBadge, BADGE_STYLES, BADGE_LABEL } from '@/lib/badge';
+import { getDiscountRate } from '@/lib/price';
 import AddToCartButton from '@/components/ui/AddToCartButton';
 
 interface ProductCardProps {
@@ -16,9 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const cartDisabled = isDiscontinued || isSoldByStock;
   const disabledLabel = isDiscontinued ? '판매종료' : '품절';
 
-  const leftBadge = getLeftBadge(product);
-  const rightBadge = getRightBadge(product);
-
+  const badge = getCardBadge(product);
   const soldOut = isDiscontinued || isSoldByStock;
 
   return (
@@ -56,23 +55,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, 280px"
           />
 
-          {/* 상단: 좌측 배지 + 우측 품절 배지 */}
-          <div className="absolute top-3 left-3 right-3 z-10 flex justify-between items-center">
-            <div>
-              {leftBadge && (
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${BADGE_STYLES[leftBadge]}`}>
-                  {leftBadge}
-                </span>
-              )}
+          {/* 배지 */}
+          {badge && (
+            <div className="absolute top-3 left-3 z-10">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${BADGE_STYLES[badge]}`}>
+                {BADGE_LABEL[badge]}
+              </span>
             </div>
-            <div>
-              {rightBadge && (
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${BADGE_STYLES.SOLD_OUT}`}>
-                  {rightBadge}
-                </span>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Product info */}
@@ -89,14 +79,25 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Bottom row */}
           <div className="mt-auto md:mt-4 flex items-center justify-between">
-            {/* Mobile price */}
-            <span className="md:hidden text-[16px] font-semibold text-on-surface">
-              {formattedPrice}원
-            </span>
-            {/* Desktop price */}
-            <span className="hidden md:inline text-headline-sm text-on-surface font-bold">
-              {formattedPrice}원
-            </span>
+            {product.discountPrice ? (
+              <div className="flex flex-col">
+                <span className="text-[16px] md:text-headline-sm font-bold text-primary">
+                  {product.discountPrice.toLocaleString()}원
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-label-sm text-tertiary line-through">
+                    {formattedPrice}원
+                  </span>
+                  <span className="text-label-sm text-primary font-bold">
+                    {getDiscountRate(product.price, product.discountPrice)}% 할인
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <span className="text-[16px] md:text-headline-sm text-on-surface font-bold">
+                {formattedPrice}원
+              </span>
+            )}
 
             <AddToCartButton
               productId={product.id}

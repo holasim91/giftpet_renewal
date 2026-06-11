@@ -27,7 +27,14 @@ if (!connectionString) {
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
+// ─── 헬퍼 ────────────────────────────────────────────────────────────────────
+
+const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
 // ─── 시드 데이터 ─────────────────────────────────────────────────────────────
+// createdAt 기준:
+//   신상품 (5개, 30일 이내): NEW 배지 상품 4개 + 최근 등록 1개
+//   구상품 (10개, 30일 이전)
 
 const PRODUCTS = [
   // ── 강아지 사료 4개 ────────────────────────────────────────────────────────
@@ -41,8 +48,9 @@ const PRODUCTS = [
     stock: 45,
     animalCategory: 'dog' as const,
     productCategory: 'food' as const,
-    badges: ['BEST'],
+    isBest: true,
     isMdPick: true,
+    createdAt: daysAgo(45),
   },
   {
     name: '네츄럴코어 유기농 치킨 1.2kg',
@@ -54,7 +62,7 @@ const PRODUCTS = [
     stock: 30,
     animalCategory: 'dog' as const,
     productCategory: 'food' as const,
-    badges: ['NEW'],
+    createdAt: daysAgo(5),
   },
   {
     name: '아카나 퍼시픽 필하드 340g',
@@ -66,9 +74,8 @@ const PRODUCTS = [
     stock: 55,
     animalCategory: 'dog' as const,
     productCategory: 'food' as const,
-    badges: [],
+    createdAt: daysAgo(20),
   },
-
   {
     name: '힐스 사이언스 다이어트 어덜트 1.5kg',
     description: '수의사 추천 1위 브랜드, 균형 잡힌 영양의 강아지 건식 사료.',
@@ -79,7 +86,8 @@ const PRODUCTS = [
     stock: 0,
     animalCategory: 'dog' as const,
     productCategory: 'food' as const,
-    badges: ['BEST'],
+    isBest: true,
+    createdAt: daysAgo(60),
   },
 
   // ── 강아지 간식 3개 ────────────────────────────────────────────────────────
@@ -93,7 +101,7 @@ const PRODUCTS = [
     stock: 80,
     animalCategory: 'dog' as const,
     productCategory: 'treats' as const,
-    badges: ['NEW'],
+    createdAt: daysAgo(12),
   },
   {
     name: '져스트 드라이드 치킨 저키 120g',
@@ -105,8 +113,9 @@ const PRODUCTS = [
     stock: 65,
     animalCategory: 'dog' as const,
     productCategory: 'treats' as const,
-    badges: ['BEST'],
+    isBest: true,
     isMdPick: true,
+    createdAt: daysAgo(90),
   },
   {
     name: '퍼피러브 소프트 트릿 믹스 200g',
@@ -118,7 +127,7 @@ const PRODUCTS = [
     stock: 40,
     animalCategory: 'dog' as const,
     productCategory: 'treats' as const,
-    badges: [],
+    createdAt: daysAgo(35),
   },
 
   // ── 강아지 용품 2개 ────────────────────────────────────────────────────────
@@ -132,7 +141,7 @@ const PRODUCTS = [
     stock: 35,
     animalCategory: 'dog' as const,
     productCategory: 'supplies' as const,
-    badges: [],
+    createdAt: daysAgo(50),
   },
   {
     name: '강아지 쿨링 매트 M 그레이',
@@ -144,7 +153,7 @@ const PRODUCTS = [
     stock: 20,
     animalCategory: 'dog' as const,
     productCategory: 'supplies' as const,
-    badges: [],
+    createdAt: daysAgo(75),
   },
 
   // ── 강아지 영양제 2개 ──────────────────────────────────────────────────────
@@ -158,8 +167,9 @@ const PRODUCTS = [
     stock: 50,
     animalCategory: 'dog' as const,
     productCategory: 'supplements' as const,
-    badges: ['BEST'],
+    isBest: true,
     isMdPick: true,
+    createdAt: daysAgo(55),
   },
   {
     name: '오메가3 피시오일 강아지용 60캡슐',
@@ -171,7 +181,7 @@ const PRODUCTS = [
     stock: 45,
     animalCategory: 'dog' as const,
     productCategory: 'supplements' as const,
-    badges: [],
+    createdAt: daysAgo(65),
   },
 
   // ── 고양이 간식 2개 ────────────────────────────────────────────────────────
@@ -185,8 +195,9 @@ const PRODUCTS = [
     stock: 90,
     animalCategory: 'cat' as const,
     productCategory: 'treats' as const,
-    badges: ['BEST'],
+    isBest: true,
     isMdPick: true,
+    createdAt: daysAgo(80),
   },
   {
     name: '테비 참치 퓨레 15g×6',
@@ -198,7 +209,7 @@ const PRODUCTS = [
     stock: 70,
     animalCategory: 'cat' as const,
     productCategory: 'treats' as const,
-    badges: ['NEW'],
+    createdAt: daysAgo(8),
   },
 
   // ── 고양이 용품 2개 ────────────────────────────────────────────────────────
@@ -212,7 +223,7 @@ const PRODUCTS = [
     stock: 25,
     animalCategory: 'cat' as const,
     productCategory: 'supplies' as const,
-    badges: [],
+    createdAt: daysAgo(100),
   },
   {
     name: '라비오뜨 자동 급수기 1.5L',
@@ -224,9 +235,9 @@ const PRODUCTS = [
     stock: 15,
     animalCategory: 'cat' as const,
     productCategory: 'supplies' as const,
-    badges: ['NEW'],
+    createdAt: daysAgo(25),
   },
-] as const;
+];
 
 // ─── 메인 ────────────────────────────────────────────────────────────────────
 
@@ -240,7 +251,7 @@ async function main() {
   console.log(`🗑️  기존 데이터 삭제: Cart ${cartCount.count}건, Wishlist ${wishlistCount.count}건, Product ${productCount.count}건`);
 
   const result = await prisma.product.createMany({
-    data: PRODUCTS.map((p) => ({ ...p, badges: [...p.badges] })),
+    data: PRODUCTS.map((p) => ({ ...p })),
   });
 
   console.log(`✅ 상품 ${result.count}개 시딩 완료\n`);

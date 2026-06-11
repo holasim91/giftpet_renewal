@@ -1,6 +1,7 @@
 import type { Product } from '@/types';
 import { PRODUCT_CATEGORY_LABELS, ANIMAL_CATEGORY_LABELS } from '@/types';
-import { BADGE_STYLES } from '@/lib/badge';
+import { getCardBadge, BADGE_STYLES, BADGE_LABEL } from '@/lib/badge';
+import { getDiscountRate } from '@/lib/price';
 
 interface Props {
   product: Product;
@@ -17,21 +18,18 @@ export default function ProductInfo({ product }: Props) {
     { label: '카테고리', value: categoryLabel },
   ];
 
+  const badge = getCardBadge(product);
+
   return (
     <>
       {/* Desktop info */}
       <div className="hidden md:flex flex-col gap-6">
         <div className="pb-6 border-b border-surface-variant">
-          {product.badges.length > 0 && (
-            <div className="flex gap-2 mb-3">
-              {product.badges.map((badge) => (
-                <span
-                  key={badge}
-                  className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${(BADGE_STYLES as Record<string, string>)[badge] ?? 'bg-surface-container text-on-surface-variant'}`}
-                >
-                  {badge}
-                </span>
-              ))}
+          {badge && (
+            <div className="mb-3">
+              <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${BADGE_STYLES[badge]}`}>
+                {BADGE_LABEL[badge]}
+              </span>
             </div>
           )}
           <h1 className="text-headline-lg text-on-surface mb-4">{product.name}</h1>
@@ -44,6 +42,9 @@ export default function ProductInfo({ product }: Props) {
                 <p className="text-body-md text-tertiary line-through">
                   ₩{product.price.toLocaleString()}
                 </p>
+                <span className="text-label-md text-primary font-bold">
+                  {getDiscountRate(product.price, product.discountPrice)}% 할인
+                </span>
               </>
             ) : (
               <p className="text-headline-md text-primary font-bold">
@@ -76,6 +77,9 @@ export default function ProductInfo({ product }: Props) {
               </span>
               <span className="text-body-md text-tertiary line-through">
                 ₩{product.price.toLocaleString()}
+              </span>
+              <span className="text-label-md text-primary font-bold">
+                {getDiscountRate(product.price, product.discountPrice)}% 할인
               </span>
             </>
           ) : (

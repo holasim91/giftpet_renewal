@@ -14,6 +14,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal';
 import AlertModal from '@/components/ui/AlertModal';
 import QuantityControl from '@/components/ui/QuantityControl';
 import type { Product } from '@/types';
+import { getDiscountRate } from '@/lib/price';
 
 const SHIPPING_FEE = 3000;
 const FREE_SHIPPING_THRESHOLD = 100000;
@@ -277,9 +278,14 @@ export default function CartClient({ initialItems, suggestions }: Props) {
                           <p className="text-label-sm text-error font-medium">판매 종료된 상품입니다</p>
                         ) : (
                           item.product.discountPrice && (
-                            <p className="text-label-sm text-secondary line-through">
-                              {item.product.price.toLocaleString()}원
-                            </p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-label-sm text-secondary line-through">
+                                {item.product.price.toLocaleString()}원
+                              </span>
+                              <span className="text-label-sm text-primary font-bold">
+                                {getDiscountRate(item.product.price, item.product.discountPrice)}% 할인
+                              </span>
+                            </div>
                           )
                         )}
                       </div>
@@ -361,9 +367,21 @@ export default function CartClient({ initialItems, suggestions }: Props) {
                         <p className="text-label-sm text-error font-medium mt-2">판매 종료된 상품입니다</p>
                       ) : (
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-headline-sm font-bold text-primary">
-                            {effectivePrice.toLocaleString()}원
-                          </span>
+                          <div>
+                            <span className="text-headline-sm font-bold text-primary">
+                              {effectivePrice.toLocaleString()}원
+                            </span>
+                            {item.product.discountPrice && (
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <span className="text-label-sm text-tertiary line-through">
+                                  {item.product.price.toLocaleString()}원
+                                </span>
+                                <span className="text-label-sm text-primary font-bold">
+                                  {getDiscountRate(item.product.price, item.product.discountPrice)}% 할인
+                                </span>
+                              </div>
+                            )}
+                          </div>
                           <QuantityControl
                             quantity={item.quantity}
                             onDecrease={() => handleQuantity(item.id, item.quantity - 1)}
@@ -557,9 +575,9 @@ function SuggestionsSection({ products }: { products: Product[] }) {
                 unoptimized
                 className="object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              {product.badges[0] && (
-                <span className="absolute top-2 left-2 bg-primary-container text-on-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                  {product.badges[0]}
+              {product.isBest && (
+                <span className="absolute top-2 left-2 bg-[#4E7CAE] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                  BEST
                 </span>
               )}
             </div>

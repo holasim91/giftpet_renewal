@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function HeroBanner() {
   return (
@@ -20,12 +21,12 @@ export default function HeroBanner() {
           <p className="text-body-lg text-on-surface-variant mb-6">
             엄선된 프리미엄 장난감, 간식, 케어 용품을 만나보세요.
           </p>
-          <button
-            type="button"
-            className="bg-primary-container text-white px-8 py-3 rounded-full text-label-md hover:opacity-90 transition-opacity shadow-sm"
+          <Link
+            href="/shop"
+            className="inline-block bg-primary-container text-white px-8 py-3 rounded-full text-label-md hover:opacity-90 transition-opacity shadow-sm"
           >
             쇼핑하기
-          </button>
+          </Link>
         </div>
       </section>
 
@@ -46,12 +47,12 @@ export default function HeroBanner() {
           <p className="text-body-md text-surface-bright mb-6 max-w-sm">
             건강하고 맛있는 간식부터 포근한 생활용품까지 한 곳에서.
           </p>
-          <button
-            type="button"
-            className="bg-primary-container text-on-primary text-label-md py-3 px-6 rounded-lg w-full max-w-[200px] shadow-sm active:scale-95 transition-transform duration-150"
+          <Link
+            href="/shop"
+            className="inline-block bg-primary-container text-on-primary text-label-md py-3 px-6 rounded-lg w-full max-w-[200px] text-center shadow-sm active:scale-95 transition-transform duration-150"
           >
             쇼핑하기
-          </button>
+          </Link>
         </div>
       </section>
     </>

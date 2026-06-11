@@ -26,8 +26,14 @@ export async function getProductById(id: string) {
 }
 
 export async function getNewArrivals(limit = 8) {
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
   return prisma.product.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      createdAt: { gte: thirtyDaysAgo },
+    },
     orderBy: { createdAt: 'desc' },
     take: limit,
   });

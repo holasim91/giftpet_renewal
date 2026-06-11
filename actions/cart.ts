@@ -14,7 +14,7 @@ export type CartItemWithProduct = {
     price: number;
     discountPrice: number | null;
     imageUrl: string;
-    badges: string[];
+    isBest: boolean;
     isActive: boolean;
     stock: number;
   };
@@ -36,7 +36,7 @@ export async function getCart(): Promise<CartItemWithProduct[]> {
           price: true,
           discountPrice: true,
           imageUrl: true,
-          badges: true,
+          isBest: true,
           isActive: true,
           stock: true,
         },

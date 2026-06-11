@@ -6,14 +6,20 @@ export const BADGE_STYLES = {
   SOLD_OUT: 'bg-inverse-surface text-inverse-on-surface',
 } as const;
 
-// 카드 좌측 상태 배지: BEST > NEW 우선순위
-export function getLeftBadge(product: Product): 'BEST' | 'NEW' | null {
-  if (product.badges.includes('BEST')) return 'BEST';
-  if (product.badges.includes('NEW')) return 'NEW';
-  return null;
-}
+export type CardBadge = keyof typeof BADGE_STYLES;
 
-// 카드 우측 상태 배지: stock===0일 때만 "품절"
-export function getRightBadge(product: Product): string | null {
-  return product.stock === 0 ? 'SOLD OUT' : null;
+export const BADGE_LABEL: Record<CardBadge, string> = {
+  BEST: 'BEST',
+  NEW: 'NEW',
+  SOLD_OUT: 'SOLD OUT',
+};
+
+// 우선순위: SOLD OUT > BEST > NEW
+export function getCardBadge(product: Product): CardBadge | null {
+  if (product.stock === 0) return 'SOLD_OUT';
+  if (product.isBest) return 'BEST';
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  if (product.createdAt && new Date(product.createdAt) >= thirtyDaysAgo) return 'NEW';
+  return null;
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import type { Product } from '@/types';
-import { BADGE_STYLES } from '@/lib/badge';
+import { getCardBadge, BADGE_STYLES, BADGE_LABEL } from '@/lib/badge';
 
 interface Props {
   product: Product;
@@ -12,7 +12,7 @@ interface Props {
 export default function ProductImages({ product }: Props) {
   const [activeThumb, setActiveThumb] = useState(0);
   const thumbnails = [product.imageUrl];
-  const firstBadge = product.badges[0];
+  const badge = getCardBadge(product);
 
   return (
     <>
@@ -64,9 +64,9 @@ export default function ProductImages({ product }: Props) {
           className="object-cover"
           sizes="100vw"
         />
-        {firstBadge && (
-          <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-label-sm uppercase tracking-wider shadow-sm font-bold ${(BADGE_STYLES as Record<string, string>)[firstBadge] ?? 'bg-surface-container text-on-surface'}`}>
-            {firstBadge}
+        {badge && (
+          <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-label-sm uppercase tracking-wider shadow-sm font-bold ${BADGE_STYLES[badge]}`}>
+            {BADGE_LABEL[badge]}
           </div>
         )}
       </div>

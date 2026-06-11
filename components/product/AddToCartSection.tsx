@@ -18,7 +18,7 @@ export default function AddToCartSection({ product }: Props) {
   const router = useRouter();
   const { showToast } = useToast();
 
-  const totalPrice = product.price * qty;
+  const totalPrice = (product.discountPrice ?? product.price) * qty;
 
   const handleAddToCart = () => {
     startTransition(async () => {

@@ -46,7 +46,7 @@ model Product {
   stock           Int              @default(0)
   animalCategory  AnimalCategory?
   productCategory ProductCategory
-  badges          String[]
+  isBest          Boolean          @default(false)
   isMdPick        Boolean          @default(false)
   isActive        Boolean          @default(true)
   createdAt       DateTime         @default(now())

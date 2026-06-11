@@ -40,8 +40,12 @@ export default function WishlistClient({ products }: Props) {
         next.delete(productId);
         return next;
       });
-      if (result.success) showToast('장바구니에 추가되었습니다', 'success');
-      else showToast('담기에 실패했습니다', 'error');
+      if (result.success) {
+        setChecked((prev) => new Set(prev).add(productId));
+        showToast('장바구니에 추가되었습니다', 'success');
+      } else {
+        showToast('담기에 실패했습니다', 'error');
+      }
     });
   };
 

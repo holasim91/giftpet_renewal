@@ -2,7 +2,6 @@
 // prisma/schema.prisma의 enum과 model을 미러링.
 // DB에서 데이터를 가져올 때 Prisma가 반환하는 타입과 동일한 구조를 유지한다.
 // 관계 필드(cart 등)는 UI에서 불필요하므로 제외.
-// createdAt / updatedAt는 선택적(?)으로 정의해 더미 데이터에서도 사용 가능하게 함.
 
 // ── Server Action 공통 반환 타입 ──────────────────────────────────────────
 
@@ -29,11 +28,11 @@ export interface Product {
   stock: number;
   animalCategory: AnimalCategory | null; // null = 전체 카테고리
   productCategory: ProductCategory;
-  badges: string[];
+  isBest: boolean;
   isMdPick: boolean;
   isActive: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  // 서버: Prisma가 Date 반환 / 클라이언트: 직렬화 후 ISO 문자열
+  createdAt?: Date | string;
 }
 
 // ── Wishlist (찜 목록, 상품 정보 포함) ─────────────────────────────────────

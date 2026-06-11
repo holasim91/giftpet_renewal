@@ -5,6 +5,104 @@
 
 ---
 
+## 2026-06-11 세션 34
+
+### 완료
+
+#### UX 소수 수정
+- `components/sections/HeroBanner.tsx` — 쇼핑하기 `<button>` → `<Link href="/shop">` 교체 (데스크톱·모바일 모두)
+- `app/(main)/wishlist/WishlistClient.tsx` — 개별 "장바구니 담기" 성공 시 해당 상품 체크박스 자동 체크 (`setChecked` 추가)
+- `components/mypage/OrderHistory.tsx` — `animate-ping` 깜빡이는 점 UI 전체 제거
+
+#### 할인 표시 시스템
+- `lib/price.ts` 신규 — `getDiscountRate(price, discountPrice): number` (할인율 계산, 외부 의존 없음)
+- 할인가 있을 때 표시 형식: 할인가(primary, 굵게) + 정가 취소선 + N% 할인
+  - `components/ui/ProductCard.tsx` — 캐러셀 카드 가격 영역
+  - `components/ui/ProductCardBase.tsx` — 그리드·찜 카드 가격 영역 (WishlistClient 자동 반영)
+  - `components/product/ProductInfo.tsx` — 상품 상세 데스크톱·모바일 모두
+  - `app/(main)/cart/CartClient.tsx` — 데스크톱(상품명 아래) + 모바일(할인가 아래) 할인율 표시
+- `components/product/AddToCartSection.tsx` — `totalPrice` 버그 수정: `product.price` → `discountPrice ?? price`
+
+#### NewArrivals 캐러셀 인터랙션
+- `components/sections/NewArrivals.tsx` — 서버 컴포넌트 → `'use client'` 전환
+  - **화살표 버튼**: `scrollBy({ behavior: 'smooth' })` / 맨 처음이면 좌측 버튼 숨김, 맨 끝이면 우측 버튼 숨김
+  - 초기 상태: `ResizeObserver`로 마운트 후 `updateScrollState()` 호출, `clientWidth || offsetWidth` fallback
+  - **드래그 스크롤**: `useRef` 기반 (`isDragging`, `dragStartX`, `dragScrollLeft`, `hasDragged`)
+  - **snap 비활성화**: `onMouseDown`에서 `el.style.scrollSnapType = 'none'` → `onMouseUp`에서 `''`로 복원 (드래그 중 카드 snap으로 끊기는 현상 제거)
+  - **rAF 최적화**: `pendingDelta` ref + `requestAnimationFrame`으로 프레임당 1회만 `scrollLeft` 갱신, `mouseup`에서 미처리 rAF 취소
+  - 드래그 후 링크 클릭 방지: `hasDragged` + `onClickCapture`
+
+### 검증
+- `pnpm build`: 정상 (22개 라우트)
+
+### 현재 상태
+- `pnpm build`: 정상 (22개 라우트)
+- 마지막 수정 파일: `CHANGELOG.md`
+
+---
+
+## 2026-06-11 세션 33
+
+### 완료 (badges 제거 → isBest Boolean 교체)
+
+#### 스키마 & DB
+- `prisma/schema.prisma` — `badges String[]` 제거, `isBest Boolean @default(false)` 추가
+- `prisma db push --accept-data-loss` — DB 컬럼 변경 반영
+- `prisma generate` — Prisma 클라이언트 재생성
+
+#### 시드
+- `prisma/seed.ts` — 각 상품의 `badges: ['BEST']` → `isBest: true`, `badges: ['NEW']`/`badges: []` → 해당 필드 제거. `createMany` 매핑에서 `badges` spread 제거. `pnpm exec tsx prisma/seed.ts` 실행: 15개 재삽입 완료
+
+#### 타입 & 배지 로직
+- `types/index.ts` — `badges: string[]` → `isBest: boolean`
+- `lib/badge.ts` — 전면 재작성: `getLeftBadge`/`getRightBadge` → `getCardBadge()` 단일 함수
+  - 우선순위: SOLD OUT (stock=0) > BEST (isBest=true) > NEW (createdAt 30일 이내)
+  - `BADGE_LABEL` 추가 (`SOLD_OUT` → 'SOLD OUT' 표시용)
+
+#### Server Actions
+- `actions/product.ts` — `getNewArrivals()`: `badges.has('NEW')` OR 조건 제거 → `createdAt 30일 이내` 단일 조건
+- `actions/cart.ts` — `CartItemWithProduct` 타입 + Prisma select: `badges` → `isBest`
+
+#### 컴포넌트
+- `components/ui/ProductCard.tsx` — `getLeftBadge`/`getRightBadge` → `getCardBadge()`, 배지 단일화
+- `components/ui/ProductCardBase.tsx` — 동일 교체
+- `components/product/ProductInfo.tsx` — `badges.map()` → `getCardBadge()` 단일 배지
+- `components/product/ProductImages.tsx` — `badges[0]` → `getCardBadge()`
+- `app/(main)/cart/CartClient.tsx` — `badges[0]` → `product.isBest` 직접 체크
+
+### 검증
+- `pnpm build`: 정상 (22개 라우트, TypeScript 에러 없음)
+
+### 현재 상태
+- `pnpm build`: 정상 (22개 라우트)
+- 마지막 수정 파일: `CHANGELOG.md`
+
+---
+
+## 2026-06-11 세션 32
+
+### 완료 (신상품 기준 개선 + seed 날짜 분산)
+
+#### 1. `actions/product.ts` — `getNewArrivals()` 수정
+- 기존: `isActive: true` 조건만 적용, 최근 N개 반환
+- 변경: OR 조건 추가 — `badges has 'NEW'` OR `createdAt >= 30일 전`
+
+#### 2. `prisma/seed.ts` — 날짜 분산
+- `daysAgo(n)` 헬퍼 함수 추가, `as const` 제거 후 각 상품에 `createdAt` 명시
+- 신상품 5개 (30일 이내): 네츄럴코어(5일), 테비 참치 퓨레(8일), 위시츄 덴탈 츄(12일), 아카나 퍼시픽 필하드(20일), 라비오뜨 자동 급수기(25일)
+- 구상품 10개 (35~100일 전): BEST 배지 상품 포함 나머지 전체
+- `pnpm prisma db seed` 실행: Product 15건 재삽입 완료
+
+### 검증
+- 브라우저(dev) 홈 신상품 섹션: 정확히 5개 표시 (NEW 배지 4개 + 30일 이내 1개)
+- BEST 배지 상품(오리젠·힐스·져스트 등) 모두 제외 확인, createdAt 내림차순 정렬 정상
+
+### 현재 상태
+- `pnpm build`: 정상 (22개 라우트)
+- 마지막 수정 파일: `CHANGELOG.md`
+
+---
+
 ## 2026-06-11 세션 31
 
 ### 완료 (배지 스타일 상수 통합 + 메인 품절 dimming)

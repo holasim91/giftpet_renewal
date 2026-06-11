@@ -8,14 +8,8 @@ export default function OrderHistory() {
         </h2>
       </div>
       <div className="flex-grow flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-4 relative">
+        <div className="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-4">
           <span className="material-symbols-outlined text-[40px] text-tertiary-container">construction</span>
-          <div className="absolute -top-1 -right-1">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-            </span>
-          </div>
         </div>
         <p className="text-headline-sm text-on-surface mb-2">준비 중입니다</p>
         <p className="text-body-md text-secondary max-w-xs">
