@@ -5,6 +5,21 @@
 
 ---
 
+## v1.3.0 (2026-06-12)
+
+### 주문 플로우 PENDING/PAID 방식으로 재설계
+- `prisma/schema.prisma` — `OrderStatus` enum에 `PENDING` 추가, `Order.status` 기본값 `PENDING`으로 변경, `recipientName`·`phone`·`zipCode`·`address` nullable 처리
+- `actions/order.ts` — `createOrder` 제거, `createPendingOrder(items)` 신규 (배송지 없이 PENDING 주문 생성, 재고 차감 없음), `confirmOrder(orderId, shippingData, deliveryMemo?)` 신규 (트랜잭션: 재고 확인 → PAID 업데이트 + 배송지 저장 → 재고 차감 → 장바구니 비우기)
+- `types/index.ts` — `OrderStatus`에 `'PENDING'` 추가
+
+### 테스트 환경 구축 및 유닛 테스트
+- `vitest.config.ts` 신규 — Vitest 설정 (`@/*` 경로 별칭은 프로젝트 루트 기준)
+- `package.json` — `test`, `test:ui` 스크립트 및 vitest 의존성 추가
+- `lib/order.utils.ts` 신규 — `validateStock`, `calculateOrderTotal`, `buildOrderItems` 순수 함수
+- `lib/order.utils.test.ts` 신규 — 8개 유닛 테스트 (재고 확인 3, 총액 계산 3, 주문 항목 빌드 2)
+
+---
+
 ## v1.2.0 (2026-06-12)
 
 ### 주문 스키마 및 Server Actions

@@ -32,6 +32,7 @@ enum ProductCategory {
 }
 
 enum OrderStatus {
+  PENDING
   PAID
   SHIPPING
   DELIVERED
@@ -112,14 +113,14 @@ model Wishlist {
 model Order {
   id             String      @id @default(cuid())
   userId         String
-  status         OrderStatus @default(PAID)
+  status         OrderStatus @default(PENDING)
   totalAmount    Int
   shippingFee    Int
   discountAmount Int
-  recipientName  String
-  phone          String
-  zipCode        String
-  address        String
+  recipientName  String?
+  phone          String?
+  zipCode        String?
+  address        String?
   addressDetail  String?
   deliveryMemo   String?
   createdAt      DateTime    @default(now())

@@ -2,31 +2,20 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '@/lib/constants';
+import { revalidatePath } from 'next/cache';
 import type { ActionResult } from '@/types';
-
-export type CreateOrderInput = {
-  items: { productId: string; quantity: number }[];
-  totalAmount: number;
-  shippingFee: number;
-  discountAmount: number;
-  recipientName: string;
-  phone: string;
-  zipCode: string;
-  address: string;
-  addressDetail?: string;
-  deliveryMemo?: string;
-};
 
 export type OrderWithItems = {
   id: string;
-  status: 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
+  status: 'PENDING' | 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
   totalAmount: number;
   shippingFee: number;
   discountAmount: number;
-  recipientName: string;
-  phone: string;
-  zipCode: string;
-  address: string;
+  recipientName: string | null;
+  phone: string | null;
+  zipCode: string | null;
+  address: string | null;
   addressDetail: string | null;
   deliveryMemo: string | null;
   createdAt: Date;
@@ -39,49 +28,53 @@ export type OrderWithItems = {
   }[];
 };
 
-export async function createOrder(
-  data: CreateOrderInput,
+export type ShippingData = {
+  recipientName: string;
+  phone: string;
+  zipCode: string;
+  address: string;
+  addressDetail?: string;
+};
+
+export async function createPendingOrder(
+  items: { productId: string; quantity: number }[],
 ): Promise<ActionResult<{ orderId: string }>> {
   const session = await auth();
   if (!session?.user?.id) return { success: false, error: '로그인이 필요합니다.' };
 
   try {
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. 재고 확인
-      const products = await tx.product.findMany({
-        where: { id: { in: data.items.map((i) => i.productId) } },
-        select: { id: true, name: true, price: true, discountPrice: true, stock: true },
-      });
+    const products = await prisma.product.findMany({
+      where: { id: { in: items.map((i) => i.productId) } },
+      select: { id: true, name: true, price: true, discountPrice: true },
+    });
 
-      for (const item of data.items) {
-        const product = products.find((p) => p.id === item.productId);
-        if (!product || product.stock < item.quantity) {
-          throw new Error('재고가 부족합니다');
-        }
+    let subtotal = 0;
+    let discountAmount = 0;
+    for (const item of items) {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) return { success: false, error: '상품을 찾을 수 없습니다.' };
+      subtotal += (product.discountPrice ?? product.price) * item.quantity;
+      if (product.discountPrice != null) {
+        discountAmount += (product.price - product.discountPrice) * item.quantity;
       }
+    }
+    const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 
-      // 2. Order 생성
-      const order = await tx.order.create({
+    const order = await prisma.$transaction(async (tx) => {
+      const created = await tx.order.create({
         data: {
           userId: session.user!.id,
-          totalAmount: data.totalAmount,
-          shippingFee: data.shippingFee,
-          discountAmount: data.discountAmount,
-          recipientName: data.recipientName,
-          phone: data.phone,
-          zipCode: data.zipCode,
-          address: data.address,
-          addressDetail: data.addressDetail,
-          deliveryMemo: data.deliveryMemo,
+          totalAmount: subtotal + shippingFee,
+          shippingFee,
+          discountAmount,
         },
       });
 
-      // 3. OrderItem 생성 (상품명·가격 스냅샷)
       await tx.orderItem.createMany({
-        data: data.items.map((item) => {
+        data: items.map((item) => {
           const product = products.find((p) => p.id === item.productId)!;
           return {
-            orderId: order.id,
+            orderId: created.id,
             productId: item.productId,
             productName: product.name,
             price: product.discountPrice ?? product.price,
@@ -90,9 +83,60 @@ export async function createOrder(
         }),
       });
 
-      // 4. 재고 차감
+      return created;
+    });
+
+    return { success: true, data: { orderId: order.id } };
+  } catch {
+    return { success: false, error: '주문 생성 중 오류가 발생했습니다.' };
+  }
+}
+
+export async function confirmOrder(
+  orderId: string,
+  shippingData: ShippingData,
+  deliveryMemo?: string,
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false, error: '로그인이 필요합니다.' };
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const order = await tx.order.findFirst({
+        where: { id: orderId, userId: session.user!.id, status: 'PENDING' },
+        include: { items: { select: { productId: true, quantity: true } } },
+      });
+      if (!order) throw new Error('주문을 찾을 수 없습니다.');
+
+      // 1. 재고 확인
+      const products = await tx.product.findMany({
+        where: { id: { in: order.items.map((i) => i.productId) } },
+        select: { id: true, stock: true },
+      });
+      for (const item of order.items) {
+        const product = products.find((p) => p.id === item.productId);
+        if (!product || product.stock < item.quantity) {
+          throw new Error('재고가 부족합니다');
+        }
+      }
+
+      // 2. PAID로 업데이트 + 배송지/메모 저장
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          status: 'PAID',
+          recipientName: shippingData.recipientName,
+          phone: shippingData.phone,
+          zipCode: shippingData.zipCode,
+          address: shippingData.address,
+          addressDetail: shippingData.addressDetail,
+          deliveryMemo,
+        },
+      });
+
+      // 3. 재고 차감
       await Promise.all(
-        data.items.map((item) =>
+        order.items.map((item) =>
           tx.product.update({
             where: { id: item.productId },
             data: { stock: { decrement: item.quantity } },
@@ -100,15 +144,15 @@ export async function createOrder(
         ),
       );
 
-      // 5. 장바구니 비우기
+      // 4. 장바구니 비우기
       await tx.cart.deleteMany({ where: { userId: session.user!.id } });
-
-      return order.id;
     });
 
-    return { success: true, data: { orderId: result } };
+    revalidatePath('/cart');
+    revalidatePath('/mypage');
+    return { success: true };
   } catch (e) {
-    const message = e instanceof Error ? e.message : '주문 처리 중 오류가 발생했습니다.';
+    const message = e instanceof Error ? e.message : '주문 확정 중 오류가 발생했습니다.';
     return { success: false, error: message };
   }
 }
@@ -122,13 +166,7 @@ export async function getOrders(): Promise<OrderWithItems[]> {
       where: { userId: session.user.id },
       include: {
         items: {
-          select: {
-            id: true,
-            productId: true,
-            productName: true,
-            price: true,
-            quantity: true,
-          },
+          select: { id: true, productId: true, productName: true, price: true, quantity: true },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -138,9 +176,7 @@ export async function getOrders(): Promise<OrderWithItems[]> {
   }
 }
 
-export async function getOrderById(
-  id: string,
-): Promise<ActionResult<OrderWithItems>> {
+export async function getOrderById(id: string): Promise<ActionResult<OrderWithItems>> {
   const session = await auth();
   if (!session?.user?.id) return { success: false, error: '로그인이 필요합니다.' };
 
@@ -149,13 +185,7 @@ export async function getOrderById(
       where: { id, userId: session.user.id },
       include: {
         items: {
-          select: {
-            id: true,
-            productId: true,
-            productName: true,
-            price: true,
-            quantity: true,
-          },
+          select: { id: true, productId: true, productName: true, price: true, quantity: true },
         },
       },
     });

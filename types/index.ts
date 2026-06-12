@@ -58,7 +58,7 @@ export interface ShippingAddress {
 
 // ── Order ──────────────────────────────────────────────────────────────────
 
-export type OrderStatus = 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
 
 export interface OrderItem {
   id: string;
