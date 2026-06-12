@@ -5,6 +5,21 @@
 
 ---
 
+## v1.2.0 (2026-06-12)
+
+### 주문 스키마 및 Server Actions
+- `prisma/schema.prisma` — `OrderStatus` enum, `Order`, `OrderItem` 모델 추가
+- `actions/order.ts` 신규 — `createOrder` (트랜잭션: 재고 확인 → 주문 생성 → OrderItem 스냅샷 → 재고 차감 → 장바구니 비우기), `getOrders`, `getOrderById`
+- `lib/order.utils.ts` 신규 — `validateStock`, `calculateOrderTotal`, `buildOrderItems` 순수 함수
+- `types/index.ts` — `OrderStatus`, `OrderItem`, `Order` 타입 추가
+
+### 테스트
+- `vitest.config.ts` 신규 — Vitest 설정 (`@/*` 경로 별칭)
+- `lib/badge.test.ts`, `lib/price.test.ts`, `lib/format.test.ts`, `lib/order.utils.test.ts` 신규 — 비즈니스 로직 유닛 테스트 19케이스
+- `package.json` — `test`, `test:ui` 스크립트 및 vitest 의존성 추가
+
+---
+
 ## v1.1.0 (2026-06-11)
 
 ### 찜하기 (Wishlist)

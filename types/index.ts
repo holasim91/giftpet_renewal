@@ -56,6 +56,37 @@ export interface ShippingAddress {
   createdAt: Date | string;
 }
 
+// ── Order ──────────────────────────────────────────────────────────────────
+
+export type OrderStatus = 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
+
+export interface OrderItem {
+  id: string;
+  orderId: string;
+  productId: string;
+  productName: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  status: OrderStatus;
+  totalAmount: number;
+  shippingFee: number;
+  discountAmount: number;
+  recipientName: string;
+  phone: string;
+  zipCode: string;
+  address: string;
+  addressDetail: string | null;
+  deliveryMemo: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  items?: OrderItem[];
+}
+
 // ── CircularRecommendation (UI 전용, DB 없음) ──────────────────────────────
 
 export interface CircularRecommendation {
