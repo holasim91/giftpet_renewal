@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>주문/결제 - GIFT PET</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f4f7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e0bfb8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ac341b;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "on-primary-fixed-variant": "#8a1c04",
+                      "on-primary-container": "#6a1000",
+                      "surface-tint": "#ac341b",
+                      "tertiary": "#5f5e5e",
+                      "on-primary-fixed": "#3d0500",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#f7fafd",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "tertiary-container": "#9e9c9c",
+                      "on-secondary-container": "#626566",
+                      "secondary-fixed-dim": "#c5c7c8",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f7fafd",
+                      "inverse-surface": "#2d3133",
+                      "surface-container": "#ebeef1",
+                      "primary-fixed": "#ffdad3",
+                      "on-surface": "#181c1e",
+                      "secondary": "#5c5f60",
+                      "on-error": "#ffffff",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#ffb4a4",
+                      "surface-container-low": "#f1f4f7",
+                      "surface-container-highest": "#e0e3e6",
+                      "outline": "#8c716b",
+                      "on-surface-variant": "#59413c",
+                      "outline-variant": "#e0bfb8",
+                      "surface-dim": "#d7dadd",
+                      "surface-variant": "#e0e3e6",
+                      "secondary-fixed": "#e1e3e4",
+                      "on-secondary-fixed": "#191c1d",
+                      "on-error-container": "#93000a",
+                      "on-background": "#181c1e",
+                      "background": "#f7fafd",
+                      "secondary-container": "#e1e3e4",
+                      "on-tertiary-container": "#343434",
+                      "inverse-on-surface": "#eef1f4",
+                      "tertiary-fixed": "#e4e2e1",
+                      "primary-container": "#ff7051",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#454748",
+                      "tertiary-fixed-dim": "#c8c6c6",
+                      "surface-container-high": "#e5e8eb",
+                      "primary": "#ac341b",
+                      "inverse-primary": "#ffb4a4",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "20px",
+                      "margin-desktop": "80px",
+                      "container-max-width": "1280px",
+                      "gutter": "24px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "headline-lg-mobile": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "headline-xl": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "1.0", "fontWeight": "500"}],
+                      "label-md": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-xl": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar Component -->
+<header class="w-full top-0 z-50 bg-surface border-b border-outline-variant shadow-sm transition-all duration-200">
+<div class="flex flex-col w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-4">
+<div class="flex items-center justify-between mb-4">
+<a class="font-headline-lg text-headline-lg font-bold text-primary" href="#">GIFT PET</a>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 relative">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">2</span>
+</button>
+</div>
+</div>
+<nav class="flex items-center gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">NEW</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">BEST</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">DOG</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">CAT</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">EVENT</a>
+</nav>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<h1 class="font-headline-xl text-headline-xl mb-10 text-on-surface">주문/결제</h1>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+<!-- Left Column: Shipping Info -->
+<div class="lg:col-span-8 space-y-8">
+<section class="bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="local_shipping">local_shipping</span>
+<h2 class="font-headline-md text-headline-md">배송지 정보</h2>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant mb-8">
+<button class="px-6 py-3 font-label-md text-label-md border-b-2 border-primary text-primary transition-all duration-200" id="tab-saved" onclick="switchTab('saved')">기존 배송지</button>
+<button class="px-6 py-3 font-label-md text-label-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-all duration-200" id="tab-new" onclick="switchTab('new')">신규 배송지</button>
+</div>
+<!-- Tab Content: Saved Address -->
+<div class="space-y-4" id="content-saved">
+<label class="group relative flex items-start p-4 rounded-xl border border-outline-variant hover:border-primary cursor-pointer transition-all duration-200 bg-surface-container-low/50">
+<input checked="" class="mt-1 text-primary focus:ring-primary h-4 w-4" name="address" type="radio"/>
+<div class="ml-4">
+<p class="font-label-md text-label-md text-on-surface mb-1">우리집 <span class="bg-primary-fixed text-on-primary-fixed-variant px-2 py-0.5 rounded text-[10px] ml-2">기본배송지</span></p>
+<p class="font-body-md text-body-md text-on-surface-variant">홍길동 | 010-1234-5678</p>
+<p class="font-body-md text-body-md text-on-surface-variant">서울특별시 서초구 강남대로 123, 06627</p>
+</div>
+</label>
+<label class="group relative flex items-start p-4 rounded-xl border border-outline-variant hover:border-primary cursor-pointer transition-all duration-200">
+<input class="mt-1 text-primary focus:ring-primary h-4 w-4" name="address" type="radio"/>
+<div class="ml-4">
+<p class="font-label-md text-label-md text-on-surface mb-1">회사</p>
+<p class="font-body-md text-body-md text-on-surface-variant">홍길동 | 010-1234-5678</p>
+<p class="font-body-md text-body-md text-on-surface-variant">서울특별시 강남구 테헤란로 456, 0159</p>
+</div>
+</label>
+</div>
+<!-- Tab Content: New Address -->
+<div class="hidden space-y-6" id="content-new">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">수령인</label>
+<input class="w-full px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-white transition-all" placeholder="이름을 입력해주세요" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">연락처</label>
+<input class="w-full px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-white transition-all" placeholder="010-0000-0000" type="tel"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">주소</label>
+<div class="flex gap-2 mb-2">
+<input class="w-2/5 px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-surface-container-low transition-all" placeholder="우편번호" readonly="" type="text"/>
+<button class="w-3/5 px-4 py-3 bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded-lg hover:opacity-80 transition-all">주소 찾기</button>
+</div>
+<input class="w-full px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-surface-container-low mb-2 transition-all" placeholder="기본 주소" readonly="" type="text"/>
+<input class="w-full px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-white transition-all" placeholder="상세 주소" type="text"/>
+</div>
+</div>
+<!-- Shipping Memo -->
+<div class="mt-10 pt-8 border-t border-outline-variant/30">
+<label class="font-label-md text-label-md text-on-surface-variant block mb-2">배송 요청사항</label>
+<select class="w-full px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-white transition-all appearance-none cursor-pointer" id="shipping-memo" onchange="toggleCustomMemo(this)">
+<option value="front-door">문 앞에 놓아주세요</option>
+<option value="guard-room">경비실에 맡겨주세요</option>
+<option value="direct">직접 수령하겠습니다</option>
+<option value="locker">택배함에 넣어주세요</option>
+<option value="call">배송 전 연락 바랍니다</option>
+<option value="custom">직접 입력</option>
+</select>
+<div class="hidden mt-4" id="custom-memo-container">
+<textarea class="w-full px-4 py-3 rounded-lg border-outline-variant focus:border-primary focus:ring-primary bg-white transition-all resize-none h-24" maxlength="50" placeholder="배송 요청사항을 입력해주세요 (최대 50자)"></textarea>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Order Summary -->
+<aside class="lg:col-span-4">
+<div class="sticky top-28 bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 overflow-hidden">
+<div class="p-6 md:p-8 bg-surface-container-low">
+<h2 class="font-headline-md text-headline-md text-on-surface">주문 요약</h2>
+</div>
+<div class="p-6 md:p-8 space-y-6">
+<!-- Product List -->
+<div class="space-y-4 max-h-64 overflow-y-auto pr-2">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img alt="Premium Dog Bed" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChrTUAY6CimbK-O0l_uCosyPrHGNFTwgiVZNsCA-JtVtYC1wfBhNvUqs-TTrq1dovjsPiZjutYARQwZaoHlaq7eQ3_JJQYvIGD6JPpdVkgL3zu7ro3DhXkAuntRsf_SS_gHnRXB8uq30zxZX-WAOOCWMR5nqN_P-rJi_El3mryih3e-jmGIJbcIF5K3KCmvi16on4ezjUM1HvJqKRUPcPx7V6sPDjW44aHu5dMwXqQyvKJOWasqGnlrWVy1Tah_5mxqicpKY1qkZI"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md text-on-surface line-clamp-1">프리미엄 오소페딕 클라우드 베드</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">수량: 1</p>
+<p class="font-label-md text-label-md text-primary mt-1">45,000원</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img alt="Organic Treats" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtFaataXuTsEOS9-FgNPqr4VxKrR4qfmLvM46da353tUoO74PIeO9m0oimnzfIVCkqbqFEc-u88N9dbtS8_mfKlTHnOnpwP7-l-0TuQJsTECzyyHUz4neuWv4-J2xZHp8f9xLpKvSy3hy3mC-NoX6yOjyH_mdG0yNLtwaYXAZMB2NAh88iOJ-w3AL96elf18VlDflrUEXs3wNS2YBEnET_E2n2Edc7kRh8k0GgPDiQAXpEFGAKR0bjtp3-hdzHY4RMw8RtgAzh4ZY"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-label-md text-label-md text-on-surface line-clamp-1">연어와 고구마 유기농 간식</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">수량: 2</p>
+<p class="font-label-md text-label-md text-primary mt-1">18,000원</p>
+</div>
+</div>
+</div>
+<!-- Price Breakdown -->
+<div class="pt-6 border-t border-outline-variant/30 space-y-3">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">총 상품금액</span>
+<span class="font-body-md text-body-md text-on-surface">63,000원</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">배송비</span>
+<span class="font-body-md text-body-md text-on-surface">3,000원</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-on-surface-variant">할인금액</span>
+<span class="font-body-md text-body-md text-error">-5,000원</span>
+</div>
+</div>
+<!-- Total -->
+<div class="pt-6 border-t-2 border-outline-variant space-y-6">
+<div class="flex flex-col gap-1">
+<span class="font-headline-sm text-headline-sm text-on-surface">최종 결제금액</span>
+<span class="font-headline-lg text-headline-lg text-primary text-right">61,000원</span>
+</div>
+<button class="w-full py-4 bg-primary text-white font-headline-sm text-headline-sm rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                                결제하기
+                            </button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="w-full mt-auto bg-surface-container-low">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<div class="flex flex-col gap-2">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">GIFT PET</span>
+<p class="font-body-md text-body-md text-secondary">© 2024 GIFT PET. 모든 반려동물에게 행복을 선물합니다.</p>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4">
+<a class="font-label-sm text-label-sm text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">이용약관</a>
+<a class="font-label-sm text-label-sm text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">개인정보처리방침</a>
+<a class="font-label-sm text-label-sm text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">고객센터</a>
+<a class="font-label-sm text-label-sm text-secondary hover:underline hover:text-primary transition-all duration-200" href="#">자주 묻는 질문</a>
+</div>
+</div>
+</footer>
+<script>
+        function switchTab(type) {
+            const tabSaved = document.getElementById('tab-saved');
+            const tabNew = document.getElementById('tab-new');
+            const contentSaved = document.getElementById('content-saved');
+            const contentNew = document.getElementById('content-new');
+
+            if (type === 'saved') {
+                tabSaved.classList.add('border-primary', 'text-primary');
+                tabSaved.classList.remove('border-transparent', 'text-on-surface-variant');
+                tabNew.classList.remove('border-primary', 'text-primary');
+                tabNew.classList.add('border-transparent', 'text-on-surface-variant');
+                contentSaved.classList.remove('hidden');
+                contentNew.classList.add('hidden');
+            } else {
+                tabNew.classList.add('border-primary', 'text-primary');
+                tabNew.classList.remove('border-transparent', 'text-on-surface-variant');
+                tabSaved.classList.remove('border-primary', 'text-primary');
+                tabSaved.classList.add('border-transparent', 'text-on-surface-variant');
+                contentNew.classList.remove('hidden');
+                contentSaved.classList.add('hidden');
+            }
+        }
+
+        function toggleCustomMemo(select) {
+            const container = document.getElementById('custom-memo-container');
+            if (select.value === 'custom') {
+                container.classList.remove('hidden');
+                container.classList.add('animate-fade-in-down');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+    </script>
+<style>
+        @keyframes fade-in-down {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-down {
+            animation: fade-in-down 0.3s ease-out forwards;
+        }
+    </style>
+</body></html>

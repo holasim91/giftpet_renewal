@@ -25,6 +25,7 @@ export type OrderWithItems = {
     productName: string;
     price: number;
     quantity: number;
+    imageUrl: string;
   }[];
 };
 
@@ -157,20 +158,112 @@ export async function confirmOrder(
   }
 }
 
+export type PendingOrderForCheckout = {
+  id: string;
+  totalAmount: number;
+  shippingFee: number;
+  discountAmount: number;
+  items: {
+    id: string;
+    productId: string;
+    productName: string;
+    price: number;
+    quantity: number;
+    imageUrl: string;
+  }[];
+};
+
+export async function getPendingOrder(id: string): Promise<PendingOrderForCheckout | null> {
+  const session = await auth();
+  if (!session?.user?.id) return null;
+
+  try {
+    const order = await prisma.order.findFirst({
+      where: { id, userId: session.user.id, status: 'PENDING' },
+      select: {
+        id: true,
+        totalAmount: true,
+        shippingFee: true,
+        discountAmount: true,
+        items: {
+          select: {
+            id: true,
+            productId: true,
+            productName: true,
+            price: true,
+            quantity: true,
+            product: { select: { imageUrl: true } },
+          },
+        },
+      },
+    });
+
+    if (!order) return null;
+
+    return {
+      ...order,
+      items: order.items.map((i) => ({
+        id: i.id,
+        productId: i.productId,
+        productName: i.productName,
+        price: i.price,
+        quantity: i.quantity,
+        imageUrl: i.product.imageUrl,
+      })),
+    };
+  } catch {
+    return null;
+  }
+}
+
+const ORDER_ITEMS_SELECT = {
+  id: true,
+  productId: true,
+  productName: true,
+  price: true,
+  quantity: true,
+  product: { select: { imageUrl: true } },
+} as const;
+
+function flattenItems(
+  items: { id: string; productId: string; productName: string; price: number; quantity: number; product: { imageUrl: string } }[],
+): OrderWithItems['items'] {
+  return items.map((i) => ({
+    id: i.id,
+    productId: i.productId,
+    productName: i.productName,
+    price: i.price,
+    quantity: i.quantity,
+    imageUrl: i.product.imageUrl,
+  }));
+}
+
 export async function getOrders(): Promise<OrderWithItems[]> {
   const session = await auth();
   if (!session?.user?.id) return [];
 
   try {
-    return await prisma.order.findMany({
-      where: { userId: session.user.id },
-      include: {
-        items: {
-          select: { id: true, productId: true, productName: true, price: true, quantity: true },
-        },
+    const orders = await prisma.order.findMany({
+      where: { userId: session.user.id, status: { not: 'PENDING' } },
+      select: {
+        id: true,
+        status: true,
+        totalAmount: true,
+        shippingFee: true,
+        discountAmount: true,
+        recipientName: true,
+        phone: true,
+        zipCode: true,
+        address: true,
+        addressDetail: true,
+        deliveryMemo: true,
+        createdAt: true,
+        items: { select: ORDER_ITEMS_SELECT },
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    return orders.map((o) => ({ ...o, items: flattenItems(o.items) }));
   } catch {
     return [];
   }
@@ -183,15 +276,25 @@ export async function getOrderById(id: string): Promise<ActionResult<OrderWithIt
   try {
     const order = await prisma.order.findFirst({
       where: { id, userId: session.user.id },
-      include: {
-        items: {
-          select: { id: true, productId: true, productName: true, price: true, quantity: true },
-        },
+      select: {
+        id: true,
+        status: true,
+        totalAmount: true,
+        shippingFee: true,
+        discountAmount: true,
+        recipientName: true,
+        phone: true,
+        zipCode: true,
+        address: true,
+        addressDetail: true,
+        deliveryMemo: true,
+        createdAt: true,
+        items: { select: ORDER_ITEMS_SELECT },
       },
     });
 
     if (!order) return { success: false, error: '주문을 찾을 수 없습니다.' };
-    return { success: true, data: order };
+    return { success: true, data: { ...order, items: flattenItems(order.items) } };
   } catch {
     return { success: false, error: '주문 조회 중 오류가 발생했습니다.' };
   }

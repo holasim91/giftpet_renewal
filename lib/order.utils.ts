@@ -1,7 +1,7 @@
 import { SHIPPING_FEE, FREE_SHIPPING_THRESHOLD } from '@/lib/constants';
 
 type StockCheckItem = { productId: string; quantity: number };
-type ProductWithStock = { id: string; stock: number };
+type ProductWithStock = { id: string; name: string; stock: number };
 
 export function validateStock(
   cartItems: StockCheckItem[],
@@ -10,7 +10,7 @@ export function validateStock(
   for (const item of cartItems) {
     const product = products.find((p) => p.id === item.productId);
     if (!product || product.stock < item.quantity) {
-      return { valid: false, error: '재고가 부족합니다' };
+      return { valid: false, error: `${product?.name ?? '상품'}의 재고가 부족합니다` };
     }
   }
   return { valid: true };

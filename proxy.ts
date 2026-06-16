@@ -13,5 +13,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/cart/:path*', '/mypage/:path*', '/mypage', '/wishlist/:path*', '/wishlist'],
+  matcher: ['/cart/:path*', '/mypage/:path*', '/mypage', '/wishlist/:path*', '/wishlist', '/checkout'],
 };
