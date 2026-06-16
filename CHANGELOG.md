@@ -5,6 +5,39 @@
 
 ---
 
+## v1.6.1 (2026-06-16)
+
+### Lighthouse 성능 최적화 (Performance 72→92, Best Practices 77→100)
+- `app/layout.tsx` — Material Symbols `display=swap` → `display=block` 변경, Plus Jakarta Sans `display: 'swap'` 추가
+- `app/globals.css` — `.material-symbols-outlined`에 `width: 1em; height: 1em; overflow: hidden` 추가 — 아이콘 박스 고정으로 CLS 0.194 제거
+- `lib/badge.ts` — NEW 배지 WCAG AA 통과 (`text-white` 2.74:1 → `text-on-primary-container` 4.54:1), BEST 배지 대비 개선 (`#4E7CAE` 4.36:1 → `#4268A8` 5.53:1)
+- `components/sections/NewArrivals.tsx` — "전체 보기" 링크·View More 카드에 `aria-label="신상품 전체 보기"` 추가
+- `components/layout/MobileHeaderClient.tsx` — `aria-label` 한국어 통일 (`Open menu`→`메뉴 열기`, `Wishlist`→`찜 목록`)
+- `components/layout/MobileDrawer.tsx` — `aria-label` 한국어 통일 (`Navigation menu`→`내비게이션 메뉴`, `Close menu`→`메뉴 닫기`)
+- `next.config.ts` — 보안 헤더 추가 (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`)
+
+---
+
+## v1.6.0 (2026-06-16)
+
+### 비로그인 처리 / 상품 정렬 / 리뷰·마이페이지 UX 개선
+- `components/wishlist/WishlistProvider.tsx` — `isLoggedIn` 컨텍스트 추가, 비로그인 시 Optimistic update 없이 즉시 `/auth/login` 이동
+- `components/ui/AddToCartButton.tsx`, `components/product/AddToCartSection.tsx` — 비로그인 처리 통일
+- `actions/product.ts` — `getProducts`에 `sort` 파라미터 추가 (`recommended` / `newest` / `price_asc` / `price_desc`), 가격 정렬은 `$queryRaw COALESCE` 활용. `getMdPickProducts` limit 파라미터 추가
+- `components/ui/SortBar.tsx` 신규 — 정렬 선택 컴포넌트
+- `components/ui/ShopListContent.tsx` — SortBar 연동, 정렬 상태 반영
+- `app/(main)/shop/*` 13개 페이지 — `searchParams` 연동 (`sort` 파라미터 전달)
+- `components/sections/MdRecommendation.tsx` — 화살표 + 드래그 캐러셀 구현 (`'use client'` 전환)
+- `app/(main)/wishlist/WishlistClient.tsx` — 장바구니 담기 완료 항목 체크박스 `disabled` 처리
+- `actions/review.ts` — 리뷰 작성 조건 `PAID` 이상 → `DELIVERED`만 허용
+- `components/review/ReviewWriteModal.tsx` — 이미지 업로드 중 스피너 표시, X 버튼 크기 축소
+- `components/Providers.tsx` 신규 — `SessionProvider` 래퍼
+- `components/mypage/NameChangeForm.tsx` — `useSession().update()`로 헤더 이름 즉시 갱신, `auth.ts` JWT update 트리거 처리
+- `components/mypage/OrderHistory.tsx` — 최초 3건 표시 후 더보기 버튼으로 3건씩 추가 노출
+- `prisma/seed.ts` — 시딩 데이터 확장
+
+---
+
 ## v1.5.0 (2026-06-15)
 
 ### 상품 리뷰 기능
