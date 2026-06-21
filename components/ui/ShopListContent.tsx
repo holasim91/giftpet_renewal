@@ -1,7 +1,10 @@
-import { Suspense } from 'react';
+'use client';
+
+import { useState, Suspense } from 'react';
 import CategorySidebar from './CategorySidebar';
 import ProductGrid from './ProductGrid';
 import SortBar from './SortBar';
+import FilterDrawer from './FilterDrawer';
 import type { Product } from '@/types';
 
 interface ShopListContentProps {
@@ -11,27 +14,29 @@ interface ShopListContentProps {
 
 export default function ShopListContent({ title, products }: ShopListContentProps) {
   const totalCount = products.length;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
     <main className="flex-1 w-full max-w-container mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 pb-28 md:pb-12">
 
       {/* Category Header */}
       <div className="mb-6 md:mb-10">
-        {/* Desktop */}
-        <div className="hidden md:block text-center">
+        {/* Desktop (1024px+) */}
+        <div className="hidden lg:block text-center">
           <h1 className="text-headline-lg text-on-background mb-4">{title}</h1>
           <p className="text-body-md text-secondary">
             총 <span className="text-primary font-bold">{totalCount}</span>개 상품
           </p>
         </div>
-        {/* Mobile */}
-        <div className="md:hidden flex justify-between items-end py-4 border-b border-surface-variant">
+        {/* Mobile + Tablet (~1023px) */}
+        <div className="lg:hidden flex justify-between items-end py-4 border-b border-surface-variant">
           <div>
             <h2 className="text-headline-lg-mobile text-on-surface mb-1">{title}</h2>
             <p className="text-body-md text-on-surface-variant">총 {totalCount}개 상품</p>
           </div>
           <button
             type="button"
+            onClick={() => setIsFilterOpen(true)}
             className="flex items-center gap-1 border border-outline-variant rounded-full px-3 py-1.5 text-label-sm text-on-surface hover:bg-surface-container-low transition-colors"
           >
             <span className="material-symbols-outlined text-[16px]">tune</span>
@@ -98,6 +103,8 @@ export default function ShopListContent({ title, products }: ShopListContentProp
 
         </div>
       </div>
+
+      <FilterDrawer isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
     </main>
   );
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 interface ConfirmModalProps {
   isOpen: boolean;
   message: string;
@@ -19,6 +21,39 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const confirmRef = useRef<HTMLButtonElement>(null);
+
+  // 모달 열릴 때 첫 번째 버튼(취소)에 자동 포커스
+  useEffect(() => {
+    if (isOpen) {
+      cancelRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onCancel();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const focusable = [cancelRef.current, confirmRef.current].filter(Boolean) as HTMLButtonElement[];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    }
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -43,6 +78,7 @@ export default function ConfirmModal({
         ].join(' ')}
       >
         <div
+          onKeyDown={handleKeyDown}
           className={[
             'w-full max-w-sm bg-surface-container-lowest rounded-2xl p-8',
             'shadow-[0px_10px_30px_rgba(0,0,0,0.12)]',
@@ -57,6 +93,7 @@ export default function ConfirmModal({
 
           <div className="flex gap-3">
             <button
+              ref={cancelRef}
               type="button"
               onClick={onCancel}
               disabled={isPending}
@@ -65,6 +102,7 @@ export default function ConfirmModal({
               {cancelLabel}
             </button>
             <button
+              ref={confirmRef}
               type="button"
               onClick={onConfirm}
               disabled={isPending}

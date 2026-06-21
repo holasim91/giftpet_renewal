@@ -325,7 +325,7 @@ export default function FilledCart({
             type="button"
             onClick={handleOrder}
             disabled={isOrdering}
-            className="flex-1 h-14 bg-primary text-on-primary font-headline-sm rounded-xl flex items-center justify-center hover:brightness-110 active:scale-[0.97] transition-all shadow-lg shadow-primary/20 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex-1 h-14 bg-primary text-on-primary text-headline-sm rounded-xl flex items-center justify-center hover:brightness-110 active:scale-[0.97] transition-all shadow-lg shadow-primary/20 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isOrdering ? '처리 중...' : '주문하기'}
           </button>

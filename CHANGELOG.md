@@ -5,6 +5,23 @@
 
 ---
 
+## v1.6.2 (2026-06-21)
+
+### Impeccable 디자인 감사 — 접근성·브랜드 일관성·미구현 UI 수정 (13/20 → 15/20)
+- `PRODUCT.md` 신규 — impeccable 스킬 컨텍스트 파일 (register, 사용자, 브랜드 성격, anti-reference, 접근성 정의)
+- `lib/badge.ts` — BEST 배지 `bg-[#4268A8] text-white` → `bg-inverse-surface text-inverse-on-surface` (오프-브랜드 하드코딩 파란색 → 디자인 토큰으로 교체)
+- `components/cart/FilledCart.tsx` — `font-headline-sm` → `text-headline-sm` (존재하지 않는 Tailwind 클래스 수정)
+- `components/ui/AddToCartButton.tsx` — `<div role="button">` → `<button type="button">` (키보드 접근성 확보), "Add to Cart" → "장바구니 담기" (언어 혼용 제거)
+- `components/product/AddToCartSection.tsx` — "ADD TO CART" → "장바구니 담기", "BUY NOW" → "바로 구매" (한국어 UI 일관성)
+- `components/sections/CategoryPills.tsx` — 정적 버튼 → `<Link>` + `usePathname()` 활성 하이라이트 (실제 동작하는 카테고리 탐색)
+- `components/ui/FilterDrawer.tsx` 신규 — 모바일·태블릿 바텀시트 필터 드로어 (동물별·유형별 단일 선택, 고양이 URL fallback 처리, 현재 경로 기준 초기 선택 복원)
+- `components/ui/ShopListContent.tsx` — FilterDrawer 연결, `md:hidden` → `lg:hidden` (태블릿 768~1023px 필터 버튼 노출)
+- `components/layout/MegaMenuTrigger.tsx` 신규 — 키보드 접근 가능 메가메뉴 클라이언트 컴포넌트 (`aria-expanded`, `aria-haspopup="menu"`, Escape 닫기, onBlur 포커스 아웃 감지)
+- `components/layout/Header.tsx` — 메가메뉴 인터랙션을 MegaMenuTrigger(클라이언트)로 분리, Header는 서버 컴포넌트 유지
+- `components/ui/ConfirmModal.tsx` — 포커스 트랩 추가 (모달 열릴 때 취소 버튼 자동 포커스, Tab 순환 트랩, Escape 닫기)
+
+---
+
 ## v1.6.1 (2026-06-16)
 
 ### Lighthouse 성능 최적화 (Performance 72→92, Best Practices 77→100)

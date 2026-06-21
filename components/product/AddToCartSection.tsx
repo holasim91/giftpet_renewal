@@ -91,14 +91,14 @@ export default function AddToCartSection({ product }: Props) {
             disabled={isPending}
             className="flex-1 h-12 bg-inverse-surface text-on-primary rounded-lg text-label-md hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            {isPending ? '추가 중...' : 'ADD TO CART'}
+            {isPending ? '추가 중...' : '장바구니 담기'}
           </button>
           <button
             type="button"
             onClick={handleBuyNow}
             className="flex-1 h-12 bg-primary-container text-on-primary rounded-lg text-label-md hover:bg-primary transition-colors"
           >
-            BUY NOW
+            바로 구매
           </button>
         </div>
       </div>

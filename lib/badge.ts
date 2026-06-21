@@ -1,7 +1,7 @@
 import type { Product } from '@/types';
 
 export const BADGE_STYLES = {
-  BEST: 'bg-[#4268A8] text-white',
+  BEST: 'bg-inverse-surface text-inverse-on-surface',
   NEW: 'bg-primary-container text-on-primary-container',
   SOLD_OUT: 'bg-inverse-surface text-inverse-on-surface',
 } as const;
