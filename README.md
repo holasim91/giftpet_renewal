@@ -136,3 +136,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=       # Storage 업로드용 (서버 전용)
 AUTH_SECRET=               # NextAuth 서명 키 (openssl rand -base64 32)
 ```
+
+---
+
+## 이미지 출처
+데모용 이미지는 Unsplash (https://unsplash.com) 라이선스 하에 사용.

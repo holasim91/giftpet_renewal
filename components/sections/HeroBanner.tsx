@@ -7,7 +7,7 @@ export default function HeroBanner() {
       {/* Desktop hero */}
       <section className="hidden md:flex w-full rounded-2xl overflow-hidden shadow-sm relative h-[400px] items-center bg-surface-container-low">
         <Image
-          src="https://images.unsplash.com/photo-1546377791-2e01b4449bf0?w=1600&q=80&fit=crop"
+          src="/images/hero-banner.jpg"
           alt="히어로 배너"
           fill
           priority
@@ -33,7 +33,7 @@ export default function HeroBanner() {
       {/* Mobile hero */}
       <section className="md:hidden relative w-full aspect-[4/3] bg-surface-container overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1546377791-2e01b4449bf0?w=1600&q=80&fit=crop"
+          src="/images/hero-banner.jpg"
           alt="히어로 배너"
           fill
           priority

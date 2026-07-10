@@ -5,6 +5,16 @@
 
 ---
 
+## v1.6.3 (2026-07-10)
+
+### AGENTS.md 정합성 정리 + 히어로 배너 이미지 로컬화
+- `AGENTS.md` — 4절 「현재 프로젝트 범위 (v0.1 — 메인페이지 껍데기)」 삭제. 변화하는 상태 정보는 `CHANGELOG.md`가 담당하므로 규약 문서에서 제거. 같은 위치의 「테스트 전략」을 `## 4. 테스트 전략`으로 승격(내용 유지)
+- `AGENTS.md` 1-2절 — 이미지 규칙을 "컴포넌트 코드에서 외부 이미지 URL(unsplash.com, lh3.googleusercontent.com 등) 직접 참조 금지 → `public/images/` 로컬 경로 참조"로 교체, 근거(외부 서비스 가용성 의존 회피) 한 줄 명시
+- `components/sections/HeroBanner.tsx` — 히어로 배너 이미지 Unsplash 외부 URL → `/images/hero-banner.jpg` 로컬 참조 (데스크톱·모바일 2곳)
+- `public/images/hero-banner.jpg` 신규 — 히어로 배너 이미지 로컬 저장
+- `README.md` — 이미지 출처(Unsplash) 표기 추가
+- 범위 한정: `prisma/seed.ts`의 상품 이미지 URL과 `next.config.ts`의 unsplash `remotePatterns`는 재시딩(DB 갱신)이 필요하여 이번 작업 범위에서 제외(DB에 저장된 URL이 남아 있어 제거 시 배포 데모 파손)
+
 ## v1.6.2 (2026-06-21)
 
 ### Impeccable 디자인 감사 — 접근성·브랜드 일관성·미구현 UI 수정 (13/20 → 15/20)
