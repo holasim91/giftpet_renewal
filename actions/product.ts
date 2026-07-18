@@ -63,11 +63,21 @@ export async function getNewArrivals(limit = 8) {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
   try {
-    return await prisma.product.findMany({
+    const recent = await prisma.product.findMany({
       where: {
         isActive: true,
         createdAt: { gte: thirtyDaysAgo },
       },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    // 30일 이내 신상품이 없으면 (시딩 시각에 종속되어 발생) 최신 등록순으로 폴백해
+    // 메인 신상품 영역이 비지 않도록 한다.
+    if (recent.length > 0) return recent;
+
+    return await prisma.product.findMany({
+      where: { isActive: true },
       orderBy: { createdAt: 'desc' },
       take: limit,
     });
